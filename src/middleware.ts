@@ -1,78 +1,40 @@
-import { MiddlewareConfig, NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-const publicRoutes = [
-	{
-		path: "/login",
-		whenAuthenticated: "redirect",
-	},
-	{
-		path: "/register",
-		whenAuthenticated: "redirect",
-	},
-	{
-		path: "/verify-email",
-		whenAuthenticated: "next",
-	},
-	{
-		path: "/",
-		whenAuthenticated: "next",
-	},
-	{
-		path: "/about",
-		whenAuthenticated: "redirect",
-	},
-] as const;
+export async function middleware(request: NextRequest) {
+  // A 'secret' deve ser a mesma que você usa nas suas authOptions.
+  // É comum colocá-la em uma variável de ambiente (process.env.NEXTAUTH_SECRET).
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const { pathname } = request.nextUrl;
 
-const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/login";
+  // Adiciona o pathname nos headers para o layout ler de forma confiável
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', pathname);
 
-export function middleware(request: NextRequest) {
-	const path = request.nextUrl.pathname;
-	const publicRoute = publicRoutes.find((route) => route.path === path);
+  const isAuthPage = pathname.startsWith('/auth');
 
-	const isProduction = process.env.NODE_ENV === "production";
-	const authCookieName = isProduction
-		? "__Secure-next-auth.session-token"
-		: "next-auth.session-token";
+  // Se o usuário NÃO tem um token (não está logado) E não está tentando acessar
+  // uma página de autenticação, redirecione-o para o login.
+  if (!token && !isAuthPage) {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
 
-	const authToken = request.cookies.get(authCookieName);
+  // Se o usuário TEM um token (está logado) E está tentando acessar uma página de
+  // autenticação (como /auth/login), redirecione-o para o dashboard.
+  if (token && isAuthPage) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
-	if (!authToken && publicRoute) {
-		return NextResponse.next();
-	}
-
-	if (!authToken && !publicRoute) {
-		const redirectUrl = request.nextUrl.clone();
-
-		redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE;
-
-		return NextResponse.redirect(redirectUrl);
-	}
-
-	if (
-		authToken &&
-		publicRoute &&
-		publicRoute.whenAuthenticated === "redirect"
-	) {
-		const redirectUrl = request.nextUrl.clone();
-
-		redirectUrl.pathname = "/dashboard";
-
-		return NextResponse.redirect(redirectUrl);
-	}
-
-	if (authToken && !publicRoute) {
-		return NextResponse.next();
-	}
-
-	return NextResponse.next();
+  // Se nenhuma das condições acima for atendida, continue a requisição com o header do pathname.
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
-export const config: MiddlewareConfig = {
-	matcher: [
-		"/",
-		"/login",
-		"/register",
-		"/verify-email",
-		"/dashboard/:path*",
-	],
+// O matcher garante que o middleware rode nas páginas corretas.
+export const config = {
+  matcher: ['/dashboard/:path*', '/onboarding', '/auth/:path*'],
 };
