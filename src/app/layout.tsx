@@ -38,7 +38,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <Providers>
         {children}
-        <ThemeToggleButton />
+        {/* <ThemeToggleButton /> */}
       </Providers>
     </html>
   );
