@@ -39,7 +39,7 @@ export function RegisterForm() {
       registerAction(values).then((data) => {
         setError(data.error);
         setSuccess(data.success);
-        toast.success(data.success)
+        toast.success(data.success || 'Usuário cadastrado com sucesso !')
       });
     });
   };

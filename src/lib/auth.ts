@@ -58,20 +58,20 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user || !user.password) {
+        if (!user || !user.passwordHash) {
           throw new Error("Usuário não encontrado ou senha não configurada.");
         }
 
         // Verifica se o e-mail foi verificado
-        if (!user.emailVerified) {
+        /* if (!user.emailVerified) {
           throw new Error(
             "Você precisa verificar seu e-mail antes de fazer login.",
           );
-        }
+        } */
 
         const isPasswordValid = await compare(
           credentials.password,
-          user.password,
+          user.passwordHash,
         );
 
         if (!isPasswordValid) {
