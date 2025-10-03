@@ -1,11 +1,12 @@
 'use client';
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { BaggageClaim, Calendar, Home, Menu, Settings, User } from "lucide-react";
-import { UserNav } from "./user-nav";
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
+import { BaggageClaim, Calendar, Home, Menu, User } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggleButton } from "../global";
 import { DashboardNav } from "./dashboard-nav";
+import { UserNav } from "./user-nav";
 
 // Você pode importar os 'navItems' de um arquivo central para não repetir
 const navItems = [
@@ -43,16 +44,22 @@ export function Header() {
                 <span className="sr-only">Abrir menu</span>
               </Button>
             </SheetTrigger>
+
             <SheetContent side="left" className="w-72">
-              <Link href="/dashboard" className="mb-4 flex items-center">
-                <span className="text-xl font-bold tracking-tight">AgendaGo</span>
-              </Link>
-              <DashboardNav items={navItems} />
+              <SheetHeader>
+                <Link href="/dashboard" className="flex items-center">
+                  <span className="text-xl font-bold tracking-tight">AgendaGo</span>
+                </Link>
+              </SheetHeader>
+              <div className="px-3">
+                <DashboardNav items={navItems} />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-4">
+          <ThemeToggleButton />
           <UserNav />
         </div>
       </div>
