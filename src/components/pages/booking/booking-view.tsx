@@ -8,7 +8,7 @@ import { DayData, formatMonthYear, groupBookingsIntoCalendarDays } from "@/utils
 import { addMonths, endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { ActionsButtons } from "./actions-buttons";
+import { AddBookingsModal } from "./add-booking-modal";
 import { BookingDetailsModal } from "./booking-details-modal"; // Reutilizando os modais
 import { CalendarGrid } from "./calendar-grid";
 import { DayDetailsModal } from "./day-details-modal";
@@ -119,8 +119,8 @@ export function BookingView() {
           </h1>
         </div>
 
-        {/* Botões de Ação e Visualização */}
-        <ActionsButtons />
+        {/* Modal para adicionar um novo agendamento */}
+        <AddBookingsModal />
       </div>
 
       {/* CORPO DO CALENDÁRIO */}
