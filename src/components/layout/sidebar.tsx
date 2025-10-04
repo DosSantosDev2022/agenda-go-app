@@ -12,7 +12,7 @@ const navItems = [
   },
   {
     label: 'Agenda',
-    href: '/appointments',
+    href: '/bookings',
     icon: Calendar,
   },
   {

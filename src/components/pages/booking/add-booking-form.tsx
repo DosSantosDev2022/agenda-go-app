@@ -13,15 +13,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useServicesQuery } from "@/hooks";
 import { useCreateBooking } from "@/hooks/booking/use-create-booking";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils";
 import { CalendarIcon, CalendarPlus, Loader2 } from "lucide-react";
 
-const MOCK_SERVICES = [
-  { id: 'cmga7aryd0003q6igbiemfcgf', name: 'Corte de Cabelo Masculino' },
-  { id: 'cmga7aryh0005q6ig3z79afcd', name: 'Combo Cabelo e Barba' },
-];
 
 // MOCK para horários disponíveis
 const TIME_SLOTS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
@@ -67,6 +64,14 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
         }
       },
     });
+  }
+  // Busca os serviços do negócio
+  const { data, isLoading } = useServicesQuery()
+
+  const services = data
+
+  if (!services) {
+    return <div>Erro ao carregar serviços </div>
   }
 
   return (
@@ -132,11 +137,11 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o serviço" />
+                    <SelectValue placeholder={`${isLoading ? "Carregando..." : "Selecione o serviço"}`} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {MOCK_SERVICES.map(service => (
+                  {services.map(service => (
                     <SelectItem key={service.id} value={service.id}>
                       {service.name}
                     </SelectItem>
