@@ -1,4 +1,4 @@
-// lib/dashboard-utils.ts
+"use server";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { Customer, Service, StatusBooking } from "@prisma/client";

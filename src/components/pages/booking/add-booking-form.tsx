@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 // Componentes Shadcn/UI
+import { CustomerSearchResult } from "@/actions";
 import { Input } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -18,6 +19,8 @@ import { useCreateBooking } from "@/hooks/booking/use-create-booking";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils";
 import { CalendarIcon, CalendarPlus, Loader2 } from "lucide-react";
+import { useCallback } from "react";
+import { CustomerCombobox } from "./customer-combobox";
 
 
 // MOCK para horários disponíveis
@@ -65,6 +68,15 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
       },
     });
   }
+
+  // Função para preencher Email e Telefone ao selecionar um cliente
+  const handleCustomerSelect = useCallback((customer: CustomerSearchResult) => {
+    // Atualiza os campos do React Hook Form com os dados do cliente
+    form.setValue("customerName", customer.name, { shouldValidate: true });
+    form.setValue("customerEmail", customer.email ?? "", { shouldValidate: true });
+    form.setValue("customerPhone", customer.phone ?? "", { shouldValidate: true });
+  }, [form]);
+
   // Busca os serviços do negócio
   const { data, isLoading } = useServicesQuery()
 
@@ -73,6 +85,8 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
   if (!services) {
     return <div>Erro ao carregar serviços </div>
   }
+
+
 
   return (
     <Form {...form}>
@@ -86,10 +100,27 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
             <FormItem>
               <FormLabel>Nome do Cliente</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Digite o nome do cliente"
-                  disabled={isPending}
-                  {...field}
+                <CustomerCombobox
+                  field={{
+                    ...field,
+                    // 💡 Sobrescreve o onChange para incluir a lógica de limpeza do email/telefone
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newName = e.target.value;
+
+                      // 1. Atualiza o valor do RHF
+                      field.onChange(newName);
+
+                      // 2. Limpa Email/Telefone se o usuário estiver digitando
+                      // (Se o valor não for o mesmo que foi setado por handleCustomerSelect)
+                      if (newName !== form.getValues('customerName')) {
+                        form.setValue("customerEmail", "", { shouldValidate: true });
+                        form.setValue("customerPhone", "", { shouldValidate: true });
+                      }
+                    }
+                  }}
+                  currentEmail={form.watch('customerEmail')}
+                  isPending={isPending}
+                  onCustomerSelect={handleCustomerSelect}
                 />
               </FormControl>
               <FormMessage />
@@ -105,7 +136,11 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
             <FormItem>
               <FormLabel>E-mail</FormLabel>
               <FormControl>
-                <Input placeholder="cliente@email.com" type="email" disabled={isPending} {...field} />
+                <Input placeholder="cliente@email.com"
+                  type="email"
+                  disabled={isPending}
+                  autoComplete="off"
+                  {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +155,12 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
             <FormItem>
               <FormLabel>Telefone (WhatsApp)</FormLabel>
               <FormControl>
-                <Input placeholder="(99) 99999-9999" disabled={isPending} {...field} />
+                <Input
+                  placeholder="(99) 99999-9999"
+                  disabled={isPending}
+                  autoComplete="off"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

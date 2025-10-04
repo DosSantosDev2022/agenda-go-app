@@ -1,6 +1,7 @@
 // components/dashboard/recent-bookings.tsx
 "use client";
 
+import { BookingWithServiceAndCustomer } from "@/actions/dashboard/dashboard-data";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BookingWithServiceAndCustomer } from "@/services/dashboard-data";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

@@ -1,7 +1,7 @@
+import { getDashboardData } from "@/actions/dashboard/dashboard-data";
 import { DashboardHeader, RecentBookings, StatsCards } from "@/components/pages/dashboard";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/prisma";
-import { getDashboardData } from "@/services/dashboard-data";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   const user = await db.user.findUnique({
     where: { id: session.user.id },
-    select: { business: { select: { id: true } } }, // Busque apenas o necessário
+    select: { business: { select: { id: true } } },
   });
 
   const userHasBusiness = !!user?.business?.id;
