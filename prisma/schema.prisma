@@ -113,7 +113,7 @@ model Service {
 model Customer {
   id    String  @id @default(cuid())
   name  String
-  email String
+  email String? // Email de contato
   phone String? // WhatsApp
 
   // Agendamentos feitos por este cliente
@@ -137,22 +137,24 @@ enum StatusBooking {
 
 // O agendamento em si
 model Booking {
-  id        String        @id @default(cuid())
-  startTime DateTime
-  endTime   DateTime
-  status    StatusBooking @default(PENDING) // Ex: CONFIRMED, CANCELED, PENDENTE
-
+  // Detalhes do agendamento
+  id         String        @id @default(cuid())
+  startTime  DateTime
+  endTime    DateTime
+  status     StatusBooking @default(PENDING) // Ex: CONFIRMED, CANCELED, PENDENTE
+  notes      String?
+  // Relacionamentos  
   businessId String
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
+  business   Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  // O cliente que fez o agendamento
   customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  serviceId String
-  service   Service @relation(fields: [serviceId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  customer   Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  // O serviço agendado
+  serviceId  String
+  service    Service       @relation(fields: [serviceId], references: [id])
+  // Timestamp
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
 }
 
 // Horários de funcionamento do negócio
