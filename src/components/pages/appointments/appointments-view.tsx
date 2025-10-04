@@ -3,11 +3,12 @@
 
 import { BookingAgenda } from "@/actions/appointments/get-appointments";
 import { Button } from "@/components/ui/button";
-import { useAppointmentsBookings } from "@/hooks/appointments/use-agenda";
+import { useAppointmentsBookings } from "@/hooks";
 import { DayData, formatMonthYear, groupBookingsIntoCalendarDays } from "@/utils/full-calendar";
 import { addMonths, endOfMonth, format, startOfMonth, subMonths } from "date-fns";
-import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+import { ActionsButtons } from "./actions-buttons";
 import { BookingDetailsModal } from "./booking-details-modal"; // Reutilizando os modais
 import { CalendarGrid } from "./calendar-grid";
 import { DayDetailsModal } from "./day-details-modal";
@@ -18,16 +19,14 @@ import { DayDetailsModal } from "./day-details-modal";
 export function AppointmentsView() {
   // Estado para o mês atual
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  //
+  // Para controlar o DayDetailsModal
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
   // Para armazenar a data do dia clicado
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   // Para armazenar os agendamentos do dia clicado
   const [selectedDayBookings, setSelectedDayBookings] = useState<BookingAgenda[]>([]);
-
   // Estado para os modais (Reutilizado)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-
   // Para armazenar o objeto de agendamento completo selecionado
   const [selectedBooking, setSelectedBooking] = useState<BookingAgenda | null>(null);
 
@@ -121,16 +120,7 @@ export function AppointmentsView() {
         </div>
 
         {/* Botões de Ação e Visualização */}
-        <div className="flex items-center space-x-2">
-          <Button size="sm" className="space-x-2">
-            <CalendarPlus className="h-4 w-4" />
-            <span className="hidden sm:inline">Novo Agendamento</span>
-          </Button>
-          {/* TODO: Implementar botões de Mês/Semana/Dia (TimeGrid) aqui */}
-          <Button variant="secondary" size="sm">Mês</Button>
-          <Button variant="outline" size="sm" disabled>Semana</Button>
-          <Button variant="outline" size="sm" disabled>Dia</Button>
-        </div>
+        <ActionsButtons />
       </div>
 
       {/* CORPO DO CALENDÁRIO */}

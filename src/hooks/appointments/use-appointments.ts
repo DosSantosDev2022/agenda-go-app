@@ -14,7 +14,7 @@ import { toast } from "sonner";
  */
 export function useAppointmentsBookings(startDate: string, endDate: string) {
   const query = useQuery<BookingAgenda[], Error>({
-    queryKey: ["agendaBookings", startDate, endDate],
+    queryKey: ["appointments", startDate, endDate],
 
     // Agora chama a Server Action diretamente!
     queryFn: () => getAppointments(startDate, endDate),
