@@ -1,7 +1,7 @@
 // components/agenda/add-appointment-form.tsx
 "use client";
 
-import { AppointmentFormValues, AppointmentSchema } from "@/types/schema/zod-appointments-schema";
+import { BookingViewFormValues, BookingViewSchema } from "@/types/schema/zod-booking-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -13,7 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateAppointment } from "@/hooks/appointments/use-create-appointment";
+import { useCreateBooking } from "@/hooks/booking/use-create-booking";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils";
 import { CalendarIcon, CalendarPlus, Loader2 } from "lucide-react";
@@ -32,16 +32,16 @@ const TIME_SLOTS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
  * @param {object} props - Propriedades do componente.
  * @param {() => void} props.onSuccess - Callback para fechar o modal após o sucesso.
  */
-interface AddAppointmentFormProps {
+interface AddBookingViewFormProps {
   onSuccess: () => void;
 }
 
-export function AddAppointmentForm({ onSuccess }: AddAppointmentFormProps) {
+export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
 
-  const { mutate, isPending } = useCreateAppointment();
+  const { mutate, isPending } = useCreateBooking();
 
-  const form = useForm<AppointmentFormValues>({
-    resolver: zodResolver(AppointmentSchema),
+  const form = useForm<BookingViewFormValues>({
+    resolver: zodResolver(BookingViewSchema),
     defaultValues: {
       customerName: "",
       customerEmail: "",
@@ -57,7 +57,7 @@ export function AddAppointmentForm({ onSuccess }: AddAppointmentFormProps) {
    * @description Manipula a submissão do formulário, integrando com a Server Action.
    * @param values Os dados validados do formulário.
    */
-  async function onSubmit(values: AppointmentFormValues) {
+  async function onSubmit(values: BookingViewFormValues) {
     // Chama a função mutate com os valores.
     mutate(values, {
       onSuccess: (result) => {

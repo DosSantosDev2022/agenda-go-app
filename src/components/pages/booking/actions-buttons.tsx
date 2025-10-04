@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui"
-import { AddAppointmentsModal } from "./add-appointments-modal"
+import { AddBookingsModal } from "./add-booking-modal"
 
 
 /**
@@ -13,7 +13,7 @@ import { AddAppointmentsModal } from "./add-appointments-modal"
 const ActionsButtons = () => {
   return (
     <div className="flex items-center space-x-2">
-      <AddAppointmentsModal />
+      <AddBookingsModal />
       {/* TODO: Implementar botões de Mês/Semana/Dia (TimeGrid) aqui */}
       <Button variant="secondary" size="sm">Mês</Button>
       <Button variant="outline" size="sm" disabled>Semana</Button>

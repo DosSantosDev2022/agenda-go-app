@@ -4,9 +4,9 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/prisma";
 import {
-  AppointmentFormValues,
-  AppointmentSchema,
-} from "@/types/schema/zod-appointments-schema";
+  BookingViewFormValues,
+  BookingViewSchema,
+} from "@/types/schema/zod-booking-schema";
 import { addMinutes } from "date-fns";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -40,11 +40,11 @@ async function getBusinessIdFromSession(): Promise<string> {
   return business.id;
 }
 
-export async function createAppointmentAction(
-  values: AppointmentFormValues,
+export async function createBookingAction(
+  values: BookingViewFormValues,
 ): Promise<{ success: boolean; message: string }> {
   // 1. Validação do Zod
-  const validationResult = AppointmentSchema.safeParse(values);
+  const validationResult = BookingViewSchema.safeParse(values);
 
   if (!validationResult.success) {
     if (validationResult.error instanceof ZodError) {

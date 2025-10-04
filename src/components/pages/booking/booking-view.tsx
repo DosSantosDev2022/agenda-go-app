@@ -1,7 +1,7 @@
 // components/agenda/custom-agenda-view.tsx
 "use client";
 
-import { BookingAgenda } from "@/actions/appointments/get-appointments";
+import { BookingAgenda } from "@/actions/booking/get-booking";
 import { Button } from "@/components/ui/button";
 import { useAppointmentsBookings } from "@/hooks";
 import { DayData, formatMonthYear, groupBookingsIntoCalendarDays } from "@/utils/full-calendar";
@@ -16,7 +16,7 @@ import { DayDetailsModal } from "./day-details-modal";
 /**
  * @description Componente principal da Agenda, possui um formato de calendário renderizando os agendamentos de cada dia do mês.
  */
-export function AppointmentsView() {
+export function BookingView() {
   // Estado para o mês atual
   const [currentMonth, setCurrentMonth] = useState(new Date());
   // Para controlar o DayDetailsModal

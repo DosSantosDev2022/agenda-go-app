@@ -1,3 +1,3 @@
-export * from "./appointments/use-appointments";
-export * from "./appointments/use-create-appointment";
+export * from "./booking/use-booking";
+export * from "./booking/use-create-booking";
 export * from "./use-mobile";

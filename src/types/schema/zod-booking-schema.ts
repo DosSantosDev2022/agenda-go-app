@@ -5,7 +5,7 @@ import { z } from "zod";
 /**
  * @description Esquema de validação para o formulário de novo agendamento.
  */
-export const AppointmentSchema = z.object({
+export const BookingViewSchema = z.object({
   // Detalhes do Cliente
   customerName: z
     .string()
@@ -34,4 +34,4 @@ export const AppointmentSchema = z.object({
 /**
  * @description Interface TypeScript baseada no esquema Zod.
  */
-export type AppointmentFormValues = z.infer<typeof AppointmentSchema>;
+export type BookingViewFormValues = z.infer<typeof BookingViewSchema>;

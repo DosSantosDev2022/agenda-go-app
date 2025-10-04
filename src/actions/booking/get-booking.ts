@@ -30,7 +30,7 @@ export type BookingAgenda = Pick<
  * @param {string} endStr - Data de fim do período (ISO string).
  * @returns {Promise<BookingAgenda[]>} A lista de agendamentos formatada.
  */
-export async function getAppointments(
+export async function getBookings(
   startStr: string,
   endStr: string,
 ): Promise<BookingAgenda[]> {

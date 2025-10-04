@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui";
 import { CalendarPlus } from "lucide-react";
 import { useState } from "react";
-import { AddAppointmentForm } from "./add-appointment-form";
+import { AddABookingForm } from "./add-booking-form";
 
 
 /**
@@ -14,7 +14,7 @@ import { AddAppointmentForm } from "./add-appointment-form";
  */
 
 
-const AddAppointmentsModal = () => {
+const AddBookingsModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -37,11 +37,11 @@ const AddAppointmentsModal = () => {
 
         {/* Adiciona o formulário aqui e passa a função de sucesso */}
         <div className="py-4">
-          <AddAppointmentForm onSuccess={handleSuccess} />
+          <AddABookingForm onSuccess={handleSuccess} />
         </div>
       </DialogContent>
     </Dialog>
   )
 }
-export { AddAppointmentsModal };
+export { AddBookingsModal };
 

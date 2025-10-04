@@ -4,7 +4,7 @@
 // Nota: Assumimos que a interface BookingAgenda está definida em um local acessível,
 // ou que o 'get-appointments' a exporta, como no componente pai.
 // Para este arquivo, a importação pode ser:
-import { BookingAgenda } from "@/actions/appointments/get-appointments";
+import { BookingAgenda } from "@/actions/booking/get-booking";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";

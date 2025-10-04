@@ -1,6 +1,6 @@
 // hooks/mutations/use-create-appointment.ts
-import { createAppointmentAction } from "@/actions/appointments/create-appointment";
-import { AppointmentFormValues } from "@/types/schema/zod-appointments-schema";
+import { createBookingAction } from "@/actions";
+import { BookingViewFormValues } from "@/types/schema/zod-booking-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -8,13 +8,12 @@ import { toast } from "sonner";
  * @description Hook customizado para criar um novo agendamento, utilizando React Query.
  * @returns O objeto de mutação do React Query.
  */
-export function useCreateAppointment() {
+export function useCreateBooking() {
   const queryClient = useQueryClient();
 
   return useMutation({
     // A função que será executada ao chamar 'mutate'
-    mutationFn: (values: AppointmentFormValues) =>
-      createAppointmentAction(values),
+    mutationFn: (values: BookingViewFormValues) => createBookingAction(values),
 
     // Lógica executada após o sucesso da Server Action
     onSuccess: (result) => {

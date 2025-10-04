@@ -1,8 +1,5 @@
 // hooks/appointments/use-agenda.ts
-import {
-  BookingAgenda,
-  getAppointments,
-} from "@/actions/appointments/get-appointments"; // Importa a Server Action e a tipagem
+import { BookingAgenda, getBookings } from "@/actions/booking/get-booking"; // Importa a Server Action e a tipagem
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -17,7 +14,7 @@ export function useAppointmentsBookings(startDate: string, endDate: string) {
     queryKey: ["appointments", startDate, endDate],
 
     // Agora chama a Server Action diretamente!
-    queryFn: () => getAppointments(startDate, endDate),
+    queryFn: () => getBookings(startDate, endDate),
 
     enabled: !!startDate && !!endDate, // Só executa se tiver as datas
 
