@@ -183,3 +183,106 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+// estilização para FULLCALENDAR COMPONENT
+
+/* styles/fullcalendar-custom.css */
+
+/* * 1. Estilos Base (Adaptando ao fundo e bordas do ShadcnUI)
+ */
+.fc {
+  /* Usa a cor de fundo do Card (ShadcnUI) */
+  --fc-bg-color: hsl(var(--card));
+  /* Usa a cor de texto foreground do ShadcnUI */
+  --fc-neutral-color: hsl(var(--foreground));
+  /* Cor das bordas das células */
+  --fc-border-color: hsl(var(--border));
+  /* Cor do cabeçalho de dia (DOM, SEG, TER) */
+  --fc-day-header-border-color: hsl(var(--border));
+  /* Fonte */
+  font-family: var(--font-sans);
+}
+
+/* * 2. Estilizando Botões e Título
+ */
+.fc .fc-toolbar-title {
+  /* Título (Mês e Ano) */
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.fc .fc-button-primary {
+  /* Estilo base dos botões (Prev, Next, Today, Views) */
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
+  border: 1px solid hsl(var(--primary));
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem; /* Mais arredondado */
+  box-shadow: none;
+  text-transform: none;
+  font-size: 0.875rem;
+}
+
+/* Estado Ativo dos Botões (View selecionada) */
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  @apply bg-secondary text-primary border-primary;
+}
+
+/* * 3. Estilizando Cabeçalhos (Dias da Semana)
+ */
+.fc-theme-standard th {
+  /* Fundo do cabeçalho do dia */
+  @apply bg-secondary text-secondary-foreground;
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
+/* Estilo para a coluna de hora (TimeGrid) */
+.fc .fc-timegrid-slot {
+  border-bottom: 1px dashed hsl(var(--border));
+}
+
+/* * 4. Estilizando Células do Calendário
+ */
+
+/* Células de dia (DiaGrid) */
+.fc-daygrid-body-unselectable, .fc-daygrid-body-selectable {
+  cursor: pointer;
+}
+
+/* Dia Atual no Mês/Semana */
+.fc-day-today {
+  /* Aplica um fundo sutil (usando primary-foreground para um toque de cor) */
+  background-color: hsl(var(--accent));
+}
+
+/* Números dos dias */
+.fc-daygrid-day-number {
+  padding: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  border-radius: 0.375rem; /* Arredonda o número */
+  color: hsl(var(--muted-foreground));
+}
+
+/* Destaca o número do dia atual */
+.fc-day-today .fc-daygrid-day-number {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* * 5. Estilizando Eventos (Agendamentos)
+ */
+.fc-event {
+  /* Remove sombra e bordas padrão */
+  border: none !important;
+  border-radius: 4px;
+  opacity: 0.9;
+  font-size: 0.875rem;
+  padding: 2px 4px;
+}
+
+.fc-event:hover {
+  opacity: 1; /* Brilha no hover */
+}

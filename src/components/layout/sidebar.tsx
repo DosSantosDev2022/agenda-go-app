@@ -12,17 +12,17 @@ const navItems = [
   },
   {
     label: 'Agenda',
-    href: '/dashboard/appointments',
+    href: '/appointments',
     icon: Calendar,
   },
   {
     label: 'Serviços',
-    href: '/dashboard/services',
+    href: '/services',
     icon: BaggageClaim,
   },
   {
     label: 'Clientes',
-    href: '/dashboard/customers',
+    href: '/customers',
     icon: User,
   }
 ];
