@@ -1,4 +1,3 @@
-import { ThemeToggleButton } from "@/components/global";
 import { Providers } from "@/providers/provider";
 import type { Metadata } from "next";
 import "./globals.css";
