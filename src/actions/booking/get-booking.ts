@@ -18,7 +18,7 @@ import { getServerSession } from "next-auth";
  */
 export type BookingAgenda = Pick<
   Booking,
-  "id" | "startTime" | "endTime" | "status"
+  "id" | "startTime" | "endTime" | "status" | "notes"
 > & {
   serviceName: Service["name"];
   customerName: Customer["name"];
@@ -85,6 +85,7 @@ export async function getBookings(
       status: true,
       service: { select: { name: true } },
       customer: { select: { name: true } },
+      notes: true,
     },
     orderBy: {
       startTime: "asc",
@@ -99,5 +100,6 @@ export async function getBookings(
     status: app.status,
     serviceName: app.service.name,
     customerName: app.customer.name,
+    notes: app.notes,
   }));
 }

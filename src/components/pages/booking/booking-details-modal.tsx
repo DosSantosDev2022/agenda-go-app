@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Separator } from "@/components/ui/separator";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { format } from "date-fns";
-import { Calendar, Hash, Mail, Tag, User } from "lucide-react";
+import { Calendar, Mail, Tag, TextAlignCenter, User } from "lucide-react";
 
 /**
  * @description Interface para as propriedades do BookingDetailsModal.
@@ -117,9 +117,9 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
 
             {/* ID do Agendamento (opcional, mas útil para debug/referência) */}
             <DetailItem
-              icon={<Hash className="h-5 w-5" />}
-              label="ID do Agendamento"
-              value={booking.id}
+              icon={<TextAlignCenter className="h-5 w-5" />}
+              label="Observações do cliente"
+              value={booking.notes || "Sem observações"}
               className="sm:col-span-2"
             />
           </div>

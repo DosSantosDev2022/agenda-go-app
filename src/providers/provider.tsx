@@ -29,7 +29,7 @@ const poppins = Poppins({
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <body
-      className={`${poppins.className}  antialiased overflow-hidden`}
+      className={`${poppins.className} antialiased scrollbar-custom`}
     >
       <AuthProvider>
         <QueryProvider>
