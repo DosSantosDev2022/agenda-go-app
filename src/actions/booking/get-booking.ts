@@ -74,9 +74,9 @@ export async function getBookings(
         lte: endDate, // Agendamentos até a data de fim
       },
       // Exclui agendamentos cancelados, focando em PENDENTE e CONFIRMADO
-      status: {
+      /* status: {
         in: [StatusBooking.PENDING, StatusBooking.CONFIRMED],
-      },
+      }, */
     },
     select: {
       id: true,

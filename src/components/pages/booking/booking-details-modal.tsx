@@ -5,13 +5,16 @@
 // ou que o 'get-appointments' a exporta, como no componente pai.
 // Para este arquivo, a importação pode ser:
 import { BookingAgenda } from "@/actions/booking/get-booking";
+import { updateBookingStatus } from "@/actions/booking/update-status-booking-action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Calendar, Mail, Tag, TextAlignCenter, User } from "lucide-react";
+import { Calendar, CircleCheck, Delete, Mail, Tag, TextAlignCenter, User } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * @description Interface para as propriedades do BookingDetailsModal.
@@ -51,7 +54,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, className =
  * @returns {JSX.Element | null} O componente modal.
  */
 export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDetailsModalProps) {
-
+  const queryClient = useQueryClient();
   if (!booking) return null;
 
   // Converte Date objects (startTime/endTime) para strings formatadas
@@ -65,10 +68,34 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
     // TODO: Chamar Server Action para enviar notificação
   };
 
+  const handleConfirmBooking = async () => {
+    const result = await updateBookingStatus(booking.id, 'CONFIRMED')
+
+    if (result.success) {
+      toast.success(result.message)
+      await queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      onOpenChange(false);
+    } else {
+      toast.error(result.message)
+    }
+  }
+
+  const handleCancelBooking = async () => {
+    const result = await updateBookingStatus(booking.id, 'CANCELED')
+
+    if (result.success) {
+      toast.success(result.message)
+      await queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      onOpenChange(false);
+    } else {
+      toast.error(result.message)
+    }
+  }
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Detalhes do Agendamento</DialogTitle>
           <DialogDescription>
@@ -125,7 +152,7 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
           </div>
         </div>
 
-        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-start sm:space-x-2">
           {/* Botão de Ação: Enviar Notificação */}
           <Button
             onClick={handleSendNotification}
@@ -138,10 +165,22 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
           {/* Botão de Fechar */}
           <Button
             variant="secondary"
-            onClick={() => onOpenChange(false)}
             className="w-full sm:w-auto"
+            onClick={() => handleConfirmBooking()}
+            disabled={booking.status === 'CONFIRMED'}
           >
-            Fechar
+            <CircleCheck className="mr-2 h-4 w-4" />
+            {booking.status === 'CONFIRMED' ? 'Agenda confirmada' : 'Confirmar agendamento'}
+          </Button>
+
+          <Button
+            variant="destructive"
+            className="w-full sm:w-auto"
+            onClick={() => handleCancelBooking()}
+            disabled={booking.status === 'CANCELED'}
+          >
+            <Delete className="mr-2 h-4 w-4" />
+            {booking.status === 'CANCELED' ? 'Agenda cancelada' : 'Cancelar agenda'}
           </Button>
         </DialogFooter>
       </DialogContent>
