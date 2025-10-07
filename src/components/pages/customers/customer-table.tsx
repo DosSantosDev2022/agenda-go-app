@@ -3,11 +3,8 @@
 
 import { DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
 import { Button } from "@/components/ui/button";
-import { useInfiniteCustomersQuery } from "@/hooks/customer/use-infinite-customers-query";
-import { CustomerListItem } from "@/types/customers";
+import { useCustomerTableController } from "@/hooks/customer";
 import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useInView } from "react-intersection-observer";
 import { customerColumns } from "./customer-columns";
 import { CustomerSearchInput } from "./customer-search-input";
 
@@ -15,42 +12,20 @@ import { CustomerSearchInput } from "./customer-search-input";
  * @description Componente que exibe a tabela de clientes com scroll infinito.
  */
 export function CustomerTable() {
-
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
   const {
-    data,
+    allCustomers,
+    inViewRef,
+    handleSearchChange,
     fetchNextPage,
+    searchTerm,
+    isLoadingInitial,
+    isSearching,
+    isError,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
-    isError,
-    isFetching
-  } = useInfiniteCustomersQuery(debouncedSearchTerm);
-
-  const handleSearchChange = useCallback((term: string) => {
-    setDebouncedSearchTerm(term);
-  }, []);
-
-  // Hook para detectar se o botão "Carregar Mais" está visível
-  const { ref: inViewRef, inView } = useInView({
-    threshold: 0, // Aciona assim que entra na view
-  });
-
-  // Combina todos os dados das páginas em uma única lista
-  const allCustomers: CustomerListItem[] = useMemo(() => {
-    return data?.pages.flatMap((page) => page.items) ?? [];
-  }, [data]);
-
-  // 💡 Lógica: Se o botão de "Carregar Mais" estiver visível E houver mais páginas
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  const isLoadingInitial = isFetching && allCustomers.length === 0 && !debouncedSearchTerm;
-  const isSearching = isFetching && !!debouncedSearchTerm;
+    hasResults,
+    isLoading
+  } = useCustomerTableController();
 
   if (isLoadingInitial) {
     return (
@@ -102,17 +77,16 @@ export function CustomerTable() {
       )}
 
       {/* Mensagens de Fim da Lista / Sem Resultados */}
-      {!hasNextPage && allCustomers.length > 0 && (
+      {!hasNextPage && hasResults && (
         <p className="text-center text-sm text-muted-foreground pt-4">
           Fim da lista de clientes.
         </p>
       )}
 
-      {/* 💡 Mensagem de "Nenhum Resultado" */}
       {!isLoading && allCustomers.length === 0 && (
         <p className="text-center text-lg text-muted-foreground pt-10">
-          {debouncedSearchTerm
-            ? `Nenhum cliente encontrado para "${debouncedSearchTerm}".`
+          {searchTerm
+            ? `Nenhum cliente encontrado para "${searchTerm}".`
             : "Nenhum cliente cadastrado."}
         </p>
       )}

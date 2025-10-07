@@ -1,13 +1,9 @@
 // components/agenda/custom-agenda-view.tsx
 "use client";
 
-import { BookingAgenda } from "@/actions/booking/get-booking";
 import { Button } from "@/components/ui/button";
-import { useAppointmentsBookings } from "@/hooks";
-import { DayData, formatMonthYear, groupBookingsIntoCalendarDays } from "@/utils/full-calendar";
-import { addMonths, endOfMonth, format, startOfMonth, subMonths } from "date-fns";
+import { useBookingViewController } from "@/hooks/booking";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
 import { AddBookingsModal } from "./add-booking-modal";
 import { BookingDetailsModal } from "./booking-details-modal"; // Reutilizando os modais
 import { CalendarGrid } from "./calendar-grid";
@@ -17,84 +13,30 @@ import { DayDetailsModal } from "./day-details-modal";
  * @description Componente principal da Agenda, possui um formato de calendário renderizando os agendamentos de cada dia do mês.
  */
 export function BookingView() {
-  // Estado para o mês atual
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  // Para controlar o DayDetailsModal
-  const [isDayModalOpen, setIsDayModalOpen] = useState(false);
-  // Para armazenar a data do dia clicado
-  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
-  // Para armazenar os agendamentos do dia clicado
-  const [selectedDayBookings, setSelectedDayBookings] = useState<BookingAgenda[]>([]);
-  // Estado para os modais (Reutilizado)
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  // Para armazenar o objeto de agendamento completo selecionado
-  const [selectedBooking, setSelectedBooking] = useState<BookingAgenda | null>(null);
+  const {
+    // Dados
+    days,
+    isLoading,
+    monthYearDisplay,
 
-  // 1. Calcular o range de datas para a Server Action (início/fim do mês exibido)
-  const dateRange = useMemo(() => {
-    const start = startOfMonth(currentMonth);
-    const end = endOfMonth(currentMonth);
-    return {
-      start: format(start, 'yyyy-MM-dd'),
-      end: format(end, 'yyyy-MM-dd'),
-    };
-  }, [currentMonth]);
+    // Handlers de Navegação
+    goToPreviousMonth,
+    goToNextMonth,
+    goToToday,
 
-  // 2. DATA FETCHING: Busca os agendamentos
-  const { data: rawBookings = [], isLoading } = useAppointmentsBookings(dateRange.start, dateRange.end);
+    // Handlers de Clique
+    handleDayClick,
+    handleBookingClick,
 
-  // 3. Agrupa os agendamentos nos dias do calendário
-  const days: DayData[] = useMemo(() => {
-    return groupBookingsIntoCalendarDays(currentMonth, rawBookings);
-  }, [currentMonth, rawBookings]);
-
-
-  // Manipuladores de Navegação
-  const goToPreviousMonth = useCallback(() => {
-    setCurrentMonth(prev => subMonths(prev, 1));
-  }, []);
-
-  const goToNextMonth = useCallback(() => {
-    setCurrentMonth(prev => addMonths(prev, 1));
-  }, []);
-
-  const goToToday = useCallback(() => {
-    setCurrentMonth(new Date());
-  }, []);
-
-  // Manipulador de Clique no Dia
-  const handleDayClick = useCallback((date: Date) => {
-
-    // 1. Encontra o objeto DayData completo para o dia clicado
-    const dayData = days.find(day => day.date.getTime() === date.getTime());
-    if (dayData) {
-      // 2. Armazena os agendamentos e a data
-      setSelectedDay(dayData.date);
-      setSelectedDayBookings(dayData.appointments);
-      setIsDayModalOpen(true);
-    }
-  }, [days]);
-
-
-  const handleBookingClick = useCallback((bookingId: string) => {
-    // 1. Encontra o objeto completo na lista geral (rawBookings)
-    // O array rawBookings é usado aqui, então ele deve estar nas dependências do useCallback
-    const booking = rawBookings.find(b => b.id === bookingId);
-
-    if (booking) {
-      // 2. Armazena o objeto de agendamento COMPLETO
-      setSelectedBooking(booking);
-
-      // 3. Fecha o DayDetailsModal
-      setIsDayModalOpen(false);
-
-      // 4. Abre o BookingDetailsModal
-      setIsBookingModalOpen(true);
-    } else {
-      // Opcional: Tratar caso o ID não seja encontrado (muito raro se a lógica estiver correta)
-      console.error(`Agendamento com ID ${bookingId} não encontrado.`);
-    }
-  }, [rawBookings])
+    // Modais
+    isDayModalOpen,
+    isBookingModalOpen,
+    selectedDay,
+    selectedDayBookings,
+    selectedBooking,
+    onOpenDayModalChange,
+    onOpenBookingModalChange,
+  } = useBookingViewController();
 
 
   return (
@@ -115,7 +57,7 @@ export function BookingView() {
           <Button variant="outline" onClick={goToToday}>Hoje</Button>
 
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight capitalize ml-4">
-            {formatMonthYear(currentMonth)}
+            {monthYearDisplay}
           </h1>
         </div>
 
@@ -136,14 +78,14 @@ export function BookingView() {
       {/* Modais (reutilizados) */}
       <DayDetailsModal
         isOpen={isDayModalOpen}
-        onOpenChange={setIsDayModalOpen}
+        onOpenChange={onOpenDayModalChange}
         date={selectedDay}
         bookings={selectedDayBookings}
         onBookingClick={handleBookingClick}
       />
       <BookingDetailsModal
         isOpen={isBookingModalOpen}
-        onOpenChange={setIsBookingModalOpen}
+        onOpenChange={onOpenBookingModalChange}
         booking={selectedBooking || null}
       />
     </div>

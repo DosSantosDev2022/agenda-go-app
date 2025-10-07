@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border overflow-x-auto">
+    <div className="rounded-md border overflow-y-auto max-h-[60vh] scrollbar-custom ">
       <Table>
         {/* Cabeçalho da Tabela */}
         <TableHeader className="bg-muted/50">

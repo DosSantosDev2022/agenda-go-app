@@ -1,8 +1,9 @@
+// actions/dashboard/get-dashboard-data.ts (ou onde seu arquivo estiver)
 "use server";
-import { authOptions } from "@/lib/auth";
+
 import { db } from "@/lib/prisma";
+import { getAuthData } from "@/utils/get-auth-data";
 import { Customer, Service, StatusBooking } from "@prisma/client";
-import { getServerSession } from "next-auth";
 
 /**
  * @typedef {Object} BookingWithServiceAndCustomer
@@ -38,26 +39,19 @@ export interface DashboardData {
 
 /**
  * @description Busca todos os dados necessários para o dashboard do usuário logado.
- * @returns {Promise<DashboardData>} Os dados estruturados para a página.
+ * @returns {Promise<DashboardData | null>} Os dados estruturados para a página, ou null se não for autorizado.
  */
 export async function getDashboardData(): Promise<DashboardData | null> {
-  const session = await getServerSession(authOptions);
+  // 1. OBTENÇÃO DOS DADOS DE AUTORIZAÇÃO E NEGÓCIO
+  const authData = await getAuthData();
 
-  if (!session?.user?.id) {
+  if (!authData) {
+    // Retorna null se não estiver autenticado ou sem businessId,
+    // garantindo que o Server Component pai possa lidar com o redirecionamento ou estado de carregamento.
     return null;
   }
 
-  // 1. Encontrar o BusinessId
-  const user = await db.user.findUnique({
-    where: { id: session.user.id },
-    select: { business: { select: { id: true } } },
-  });
-
-  const businessId = user?.business?.id;
-
-  if (!businessId) {
-    return null; // Caso o usuário esteja logado mas não tenha business (não deveria acontecer após o fix do loop)
-  }
+  const { businessId } = authData;
 
   // Busca paralela para eficiência
   const [totalBookingsCount, totalCustomersCount, allBookings, recentBookings] =
@@ -110,6 +104,8 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     totalBookings: totalBookingsCount,
     totalCustomers: totalCustomersCount,
     totalRevenue: totalRevenue,
+    // O casting é necessário aqui porque o tipo de retorno do Prisma é compatível,
+    // mas o TS precisa da confirmação.
     recentBookings: recentBookings as BookingWithServiceAndCustomer[],
   };
 }

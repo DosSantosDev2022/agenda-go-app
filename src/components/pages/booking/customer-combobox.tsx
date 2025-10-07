@@ -4,10 +4,8 @@
 import { CustomerSearchResult } from "@/actions";
 import { Command, CommandEmpty, CommandGroup, CommandItem, Input } from "@/components/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useSearchCustomersQuery } from "@/hooks/customer/use-search-customers-query";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useCustomerComboboxController } from "@/hooks/booking";
 import { Loader2, User } from "lucide-react";
-import * as React from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 /**
@@ -31,25 +29,17 @@ interface CustomerComboboxProps {
 export function CustomerCombobox({
   field,
   onCustomerSelect,
-  currentEmail,
   isPending,
 }: CustomerComboboxProps) {
-  const [open, setOpen] = React.useState(false);
+  const {
+    open,
+    setOpen,
+    customers,
+    isFetching,
+    hasValidSearchTerm,
+    handleSelect,
+  } = useCustomerComboboxController({ field, onCustomerSelect });
 
-  // A pesquisa só será acionada 300ms após a última digitação
-  const debouncedSearchTerm = useDebounce(field.value, 300);
-
-
-  // Usa o hook de busca reativa. A query só roda se currentName.length >= 3
-  const { data: customers, isLoading, isFetching } = useSearchCustomersQuery(debouncedSearchTerm);
-  // Condição SIMPLES para determinar se a busca resultou em algo.
-  const hasValidSearchTerm = debouncedSearchTerm.trim().length >= 3;
-
-  // Manipulador de Seleção
-  const handleSelect = (customer: CustomerSearchResult) => {
-    onCustomerSelect(customer);
-    setOpen(false); // Fecha o popover após a seleção
-  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

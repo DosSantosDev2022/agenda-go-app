@@ -3,7 +3,9 @@
 
 import db from "@/lib/prisma";
 import { CustomerListItem, CustomersPageData } from "@/types/customers";
+import { getAuthData } from "@/utils/get-auth-data";
 import { Prisma } from "@prisma/client"; // 💡 Importar Prisma para tipagem
+import { redirect } from "next/navigation";
 
 const PAGE_SIZE = 50; // Defina o limite de itens por página
 
@@ -28,14 +30,27 @@ export async function getCustomersList({
   cursor?: string;
   searchTerm?: string;
 }): Promise<CustomersPageData> {
+  // 1. AUTENTICAÇÃO E AUTORIZAÇÃO (USANDO O UTILITÁRIO)
+  const authData = await getAuthData();
+
+  if (!authData) {
+    // Se não estiver autenticado ou sem business, redireciona
+    // Isso garante que a ação só é executada por usuários logados e com negócio
+    return redirect("/auth/login");
+  }
+
+  // Dados extraídos do utilitário
+  const { businessId } = authData;
+
   try {
     // 1. Constrói o objeto de filtro WHERE
     // Inicialmente, o filtro é vazio.
-    let where: Prisma.CustomerWhereInput = {};
+    let where: Prisma.CustomerWhereInput = {
+      businessId: businessId,
+    };
     const normalizedSearchTerm = searchTerm?.trim() || "";
 
     if (normalizedSearchTerm) {
-      // 1. 💡 Lógica Condicional de Busca
       if (isEmail(normalizedSearchTerm)) {
         // Se for um e-mail, buscamos por e-mail, exigindo que a string seja IGUAL ou comece com o termo para ser mais preciso
         where = {
@@ -64,7 +79,7 @@ export async function getCustomersList({
         createdAt: "desc",
       },
 
-      // 🚀 APLICA O FILTRO CONSTRUÍDO
+      // APLICA O FILTRO CONSTRUÍDO
       where: where,
 
       // Paginação Baseada em Cursor

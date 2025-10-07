@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 /* export const dynamic = 'force-dynamic'; */
 
-export default async function ProtectedLayout({
+export default async function PriveteRoutesLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -32,18 +32,21 @@ export default async function ProtectedLayout({
   const userHasBusiness = !!user.business;
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
-      <div className="flex flex-1">
-        {/* Passamos o status para o children via Context API, se necessário, 
-           mas aqui vamos apenas usar o status para a UI do layout */}
-        {userHasBusiness && <Sidebar />}
-        <div className={`flex flex-1 flex-col`}>
-          <Header />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
-            {/* O children agora é responsável pelo redirect */}
-            {children}
-          </main>
-        </div>
+    <div className="flex bg-background h-screen overflow-hidden">
+
+      {/* 1. Sidebar */}
+      {userHasBusiness && <Sidebar />}
+
+      {/* 2. Área de Conteúdo (Header + Main) */}
+      <div className={`flex flex-1 flex-col`}>
+        <Header />
+
+        {/* 💡 AQUI É ONDE O SCROLL DEVE OCORRER NO DASHBOARD! 
+           flex-1 faz com que ele preencha o espaço restante, e overflow-y-auto 
+           cria o scroll interno. */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-custom">
+          {children}
+        </main>
       </div>
     </div>
   );

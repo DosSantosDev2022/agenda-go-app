@@ -5,7 +5,7 @@ import { ServiceListItem } from "@/actions/services/get-services";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useDeleteService } from "@/hooks";
+import { useDeleteService } from "@/hooks/services";
 import { Edit, Loader2, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { ServiceEditModal } from "./service-edit-modal";

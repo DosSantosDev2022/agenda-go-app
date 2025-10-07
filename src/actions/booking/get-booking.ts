@@ -1,11 +1,10 @@
 // actions/appointments/get-appointments.ts
 "use server";
 
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma";
+import { getAuthData } from "@/utils/get-auth-data";
 import { Booking, Customer, Service, StatusBooking } from "@prisma/client";
 import { endOfDay, parseISO, startOfDay } from "date-fns";
-import { getServerSession } from "next-auth";
 
 /**
  * @typedef {Object} BookingAgenda
@@ -34,25 +33,16 @@ export async function getBookings(
   startStr: string,
   endStr: string,
 ): Promise<BookingAgenda[]> {
-  const session = await getServerSession(authOptions);
+  // 1. OBTENÇÃO DOS DADOS DE AUTORIZAÇÃO E NEGÓCIO
+  const authData = await getAuthData();
 
-  if (!session?.user?.id) {
-    throw new Error("Usuário não autenticado.");
-  }
-
-  // 1. Encontrar o BusinessId do usuário
-  const user = await db.user.findUnique({
-    where: { id: session.user.id },
-    select: { business: { select: { id: true } } },
-  });
-
-  const businessId = user?.business?.id;
-
-  if (!businessId) {
-    // Se o usuário está logado mas não tem business, retornamos vazio.
+  if (!authData) {
+    // Se não estiver autenticado ou sem business, retorna um array vazio.
     return [];
   }
 
+  const { businessId } = authData;
+  
   // 2. Tratar as datas
   let startDate: Date;
   let endDate: Date;
@@ -62,20 +52,22 @@ export async function getBookings(
     startDate = startOfDay(parseISO(startStr));
     endDate = endOfDay(parseISO(endStr));
   } catch (e) {
-    throw new Error("Formato de data inválido.");
+    // É mais seguro retornar um array vazio e logar o erro, em vez de lançar um erro que pode quebrar a UI
+    console.error("Erro ao converter datas:", e);
+    return [];
   }
 
   // 3. Buscar os agendamentos no banco de dados
   const appointments = await db.booking.findMany({
     where: {
-      businessId,
+      businessId, // 💡 businessId é usado para proteger a busca
       startTime: {
         gte: startDate, // Agendamentos a partir da data de início
         lte: endDate, // Agendamentos até a data de fim
       },
       // Exclui agendamentos cancelados, focando em PENDENTE e CONFIRMADO
       /* status: {
-        in: [StatusBooking.PENDING, StatusBooking.CONFIRMED],
+         in: [StatusBooking.PENDING, StatusBooking.CONFIRMED],
       }, */
     },
     select: {

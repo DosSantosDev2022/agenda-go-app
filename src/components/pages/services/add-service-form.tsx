@@ -1,7 +1,7 @@
 // components/services/new-service-form.tsx
 "use client";
 
-import { useCreateService } from "@/hooks";
+import { useCreateService } from "@/hooks/services";
 import { ServiceFormValues, ServiceSchema } from "@/types/schema/zod-service-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

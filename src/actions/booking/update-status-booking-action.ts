@@ -1,8 +1,9 @@
-// src/app/actions/booking-actions.ts (Exemplo de nome de arquivo)
+// src/app/actions/booking-actions.ts
 "use server";
 
 import { db } from "@/lib/prisma";
 import { formatBookingStatus } from "@/utils/format-status-booking";
+import { getAuthData } from "@/utils/get-auth-data";
 import { StatusBooking } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -14,18 +15,32 @@ interface UpdateBookingStatusResponse {
 
 /**
  * @description Atualiza o status de um agendamento (booking) específico.
+ * Garante que a atualização só ocorre se o agendamento pertencer ao negócio do usuário logado.
+ *
  * @param {string} bookingId O ID único do agendamento a ser atualizado.
- * @param {BookingStatus} status O novo status para o agendamento (ex: 'CONFIRMED').
+ * @param {StatusBooking} status O novo status para o agendamento (ex: 'CONFIRMED').
  * @returns {Promise<UpdateBookingStatusResponse>} Objeto com o resultado da operação.
  */
 export async function updateBookingStatus(
   bookingId: string,
   status: StatusBooking,
 ): Promise<UpdateBookingStatusResponse> {
+  // 1. OBTENÇÃO DOS DADOS DE AUTORIZAÇÃO E NEGÓCIO
+  const authData = await getAuthData();
+
+  if (!authData) {
+    return {
+      success: false,
+      message: "Não autorizado: Sessão inválida ou negócio não configurado.",
+      error: "UNAUTHORIZED",
+    };
+  }
+
+  const { businessId } = authData;
   const statusFormatted = formatBookingStatus(status);
 
   try {
-    // 1. Validação básica de entrada.
+    // 2. Validação básica de entrada.
     if (!bookingId || !status) {
       return {
         success: false,
@@ -33,20 +48,25 @@ export async function updateBookingStatus(
       };
     }
 
-    // 2. Busca e verifica se o booking existe.
+    // 3. Busca e verifica se o booking existe e PERTENCE ao negócio.
     const booking = await db.booking.findUnique({
-      where: { id: bookingId },
+      where: {
+        id: bookingId,
+        businessId: businessId,
+      },
     });
 
     if (!booking) {
+      // Se não for encontrado (porque não existe OU não pertence ao businessId do usuário)
       return {
         success: false,
-        message: "Reserva não encontrada.",
-        error: "NOT_FOUND",
+        message:
+          "Reserva não encontrada ou você não tem permissão para alterá-la.",
+        error: "NOT_FOUND_OR_UNAUTHORIZED",
       };
     }
 
-    // 3. Verifica se o status já é o que se deseja (evita escrita desnecessária).
+    // 4. Verifica se o status já é o que se deseja (evita escrita desnecessária).
     if (booking.status === status) {
       return {
         success: true,
@@ -54,14 +74,18 @@ export async function updateBookingStatus(
       };
     }
 
-    // 4. Atualiza o status no banco de dados.
+    // 5. Atualiza o status no banco de dados.
     await db.booking.update({
-      where: { id: bookingId },
+      where: {
+        id: bookingId,
+        businessId: businessId, // 🛑 REPETIR o businessId garante que a operação é atômica e segura.
+      },
       data: { status },
     });
 
     // Revalida os caminhos (mantido para segurança e fallback).
     revalidatePath("/bookings");
+    revalidatePath("/dashboard");
 
     return {
       success: true,

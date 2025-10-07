@@ -1,20 +1,14 @@
 // components/agenda/booking-details-modal.tsx
 "use client";
-
-// Nota: Assumimos que a interface BookingAgenda está definida em um local acessível,
-// ou que o 'get-appointments' a exporta, como no componente pai.
-// Para este arquivo, a importação pode ser:
 import { BookingAgenda } from "@/actions/booking/get-booking";
-import { updateBookingStatus } from "@/actions/booking/update-status-booking-action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { useBookingDetailsController } from "@/hooks/booking";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
-import { useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
-import { Calendar, CircleCheck, Delete, Mail, Tag, TextAlignCenter, User } from "lucide-react";
-import { toast } from "sonner";
+import { Calendar, CircleCheck, Delete, Tag, TextAlignCenter, User } from "lucide-react";
+import { DetailItem } from "./detail-item";
 
 /**
  * @description Interface para as propriedades do BookingDetailsModal.
@@ -26,27 +20,6 @@ interface BookingDetailsModalProps {
   booking: BookingAgenda | null;
 }
 
-// --- Componente auxiliar DetailItem (mantido) ---
-
-interface DetailItemProps {
-  icon: React.ReactNode;
-  label: string;
-  value: string | number;
-  className?: string;
-}
-
-const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, className = "" }) => (
-  <div className={`flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/30 transition-colors ${className}`}>
-    <div className="text-primary mt-1">{icon}</div>
-    <div>
-      <p className="text-sm font-medium text-muted-foreground">{label}</p>
-      <p className="text-lg font-semibold text-foreground break-words">{value}</p>
-    </div>
-  </div>
-);
-
-// --- Componente principal ---
-
 /**
  * @description Modal que exibe os detalhes de um agendamento e a ação de notificação.
  * Utiliza dados já carregados no componente pai.
@@ -54,43 +27,17 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, className =
  * @returns {JSX.Element | null} O componente modal.
  */
 export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDetailsModalProps) {
-  const queryClient = useQueryClient();
+
   if (!booking) return null;
 
-  // Converte Date objects (startTime/endTime) para strings formatadas
-  const formatTime = (date: Date) => {
-    return format(date, 'HH:mm');
-  }
 
-
-  const handleSendNotification = () => {
-    console.log(`Notificação de lembrete solicitada para o agendamento ID: ${booking.id}`);
-    // TODO: Chamar Server Action para enviar notificação
-  };
-
-  const handleConfirmBooking = async () => {
-    const result = await updateBookingStatus(booking.id, 'CONFIRMED')
-
-    if (result.success) {
-      toast.success(result.message)
-      await queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      onOpenChange(false);
-    } else {
-      toast.error(result.message)
-    }
-  }
-
-  const handleCancelBooking = async () => {
-    const result = await updateBookingStatus(booking.id, 'CANCELED')
-
-    if (result.success) {
-      toast.success(result.message)
-      await queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      onOpenChange(false);
-    } else {
-      toast.error(result.message)
-    }
-  }
+  const {
+    fullTimeRange,
+    handleConfirmBooking,
+    handleCancelBooking,
+    currentStatus
+    // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+  } = useBookingDetailsController(booking, onOpenChange);
 
 
   return (
@@ -113,13 +60,12 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
                 <div>
                   <p className="text-lg font-medium text-muted-foreground">Data e Hora</p>
                   <p className="text-2xl font-bold">
-                    {/* Formata a data: 15/10 | 09:00 - 10:00 */}
-                    {format(booking.startTime, "dd/MM")} | {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
+                    {fullTimeRange}
                   </p>
                 </div>
               </div>
-              <Badge variant={getStatusVariant(booking.status)}>
-                {formatBookingStatus(booking.status)}
+              <Badge variant={getStatusVariant(currentStatus)}>
+                {formatBookingStatus(currentStatus)}
               </Badge>
             </div>
           </div>
@@ -154,13 +100,13 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
 
         <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-start sm:space-x-2">
           {/* Botão de Ação: Enviar Notificação */}
-          <Button
+          {/* <Button
             onClick={handleSendNotification}
             className="w-full sm:w-auto mt-2 sm:mt-0"
           >
             <Mail className="mr-2 h-4 w-4" />
             Enviar Lembrete
-          </Button>
+          </Button> */}
 
           {/* Botão de Fechar */}
           <Button

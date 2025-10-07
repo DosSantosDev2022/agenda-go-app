@@ -1,6 +1,6 @@
 // utils/calendar-utils.ts
 
-import { BookingAgenda } from "@/actions/booking/get-appointments";
+import { BookingAgenda } from "@/actions/booking/get-booking";
 import {
   addDays,
   eachDayOfInterval,

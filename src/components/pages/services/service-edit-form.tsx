@@ -1,7 +1,7 @@
 // components/services/edit-service-form.tsx
 "use client";
 
-import { useUpdateService } from "@/hooks";
+import { useUpdateService } from "@/hooks/services";
 import { ServiceFormValues, ServiceSchema } from "@/types/schema/zod-service-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

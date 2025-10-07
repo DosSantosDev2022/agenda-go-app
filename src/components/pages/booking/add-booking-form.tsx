@@ -1,12 +1,5 @@
 // components/agenda/add-appointment-form.tsx
 "use client";
-
-import { BookingViewFormValues, BookingViewSchema } from "@/types/schema/zod-booking-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-// Componentes Shadcn/UI
-import { CustomerSearchResult } from "@/actions";
 import { Input } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,18 +7,15 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useServicesQuery } from "@/hooks";
-import { useCreateBooking } from "@/hooks/booking/use-create-booking";
+import { useAddBookingFormController } from "@/hooks/booking";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils";
 import { CalendarIcon, CalendarPlus, Loader2 } from "lucide-react";
-import { useCallback } from "react";
 import { CustomerCombobox } from "./customer-combobox";
 
 
 // MOCK para horários disponíveis
 const TIME_SLOTS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
-
 
 /**
  * @description Componente de formulário para a criação de um novo agendamento.
@@ -37,60 +27,23 @@ interface AddBookingViewFormProps {
 }
 
 export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
-
-  const { mutate, isPending } = useCreateBooking();
-
-  const form = useForm<BookingViewFormValues>({
-    resolver: zodResolver(BookingViewSchema),
-    defaultValues: {
-      customerName: "",
-      customerEmail: "",
-      customerPhone: "",
-      serviceId: "",
-      date: undefined, // Tipo Date | undefined
-      startTime: "",
-      notes: "",
-    },
-  });
-
-  /**
-   * @description Manipula a submissão do formulário, integrando com a Server Action.
-   * @param values Os dados validados do formulário.
-   */
-  async function onSubmit(values: BookingViewFormValues) {
-    // Chama a função mutate com os valores.
-    mutate(values, {
-      onSuccess: (result) => {
-        if (result.success) {
-          form.reset();
-          onSuccess(); // Fecha o modal
-        }
-      },
-    });
-  }
-
-  // Função para preencher Email e Telefone ao selecionar um cliente
-  const handleCustomerSelect = useCallback((customer: CustomerSearchResult) => {
-    // Atualiza os campos do React Hook Form com os dados do cliente
-    form.setValue("customerName", customer.name, { shouldValidate: true });
-    form.setValue("customerEmail", customer.email ?? "", { shouldValidate: true });
-    form.setValue("customerPhone", customer.phone ?? "", { shouldValidate: true });
-  }, [form]);
-
-  // Busca os serviços do negócio
-  const { data, isLoading } = useServicesQuery()
-
-  const services = data
-
-  if (!services) {
-    return <div>Erro ao carregar serviços </div>
-  }
-
+  const {
+    form,
+    onSubmit,
+    isPending,
+    services,
+    isLoadingServices,
+    isErrorServices,
+    isServicesDisabled,
+    handleCustomerSelect,
+    handleCustomerNameChange,
+    customerEmail,
+  } = useAddBookingFormController({ onSuccess });
 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-6">
 
         {/* 1. SELEÇÃO DE CLIENTE */}
         <FormField
@@ -103,22 +56,9 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
                 <CustomerCombobox
                   field={{
                     ...field,
-                    // 💡 Sobrescreve o onChange para incluir a lógica de limpeza do email/telefone
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                      const newName = e.target.value;
-
-                      // 1. Atualiza o valor do RHF
-                      field.onChange(newName);
-
-                      // 2. Limpa Email/Telefone se o usuário estiver digitando
-                      // (Se o valor não for o mesmo que foi setado por handleCustomerSelect)
-                      if (newName !== form.getValues('customerName')) {
-                        form.setValue("customerEmail", "", { shouldValidate: true });
-                        form.setValue("customerPhone", "", { shouldValidate: true });
-                      }
-                    }
+                    onChange: handleCustomerNameChange
                   }}
-                  currentEmail={form.watch('customerEmail')}
+                  currentEmail={customerEmail}
                   isPending={isPending}
                   onCustomerSelect={handleCustomerSelect}
                 />
@@ -174,14 +114,21 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Serviço</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isServicesDisabled}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder={`${isLoading ? "Carregando..." : "Selecione o serviço"}`} />
+                    <SelectValue placeholder={
+                      isLoadingServices
+                        ? "Carregando serviços..."
+                        : isErrorServices || !services
+                          ? "Erro ao carregar"
+                          : "Selecione o serviço"
+                    } />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {services.map(service => (
+                  {/** biome-ignore lint/complexity/useOptionalChain: <explanation> */}
+                  {services && services.map(service => (
                     <SelectItem key={service.id} value={service.id}>
                       {service.name}
                     </SelectItem>

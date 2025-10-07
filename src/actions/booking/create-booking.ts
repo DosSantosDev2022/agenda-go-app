@@ -1,53 +1,46 @@
 // actions/appointments/create-appointment.ts
 "use server";
 
-import { authOptions } from "@/lib/auth";
 import db from "@/lib/prisma";
 import {
   BookingViewFormValues,
   BookingViewSchema,
 } from "@/types/schema/zod-booking-schema";
+import { getAuthData } from "@/utils/get-auth-data";
 import { addMinutes } from "date-fns";
-import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
 
 /**
- * @description Obtém o BusinessId associado ao usuário logado através do NextAuth.
- * @returns O businessId do negócio do usuário logado.
- * @throws {Error} Se o usuário não estiver logado ou não tiver um negócio associado.
+ * @description Cria um novo agendamento (booking) associado ao negócio do usuário logado.
+ * * Esta Server Action realiza validação, verifica/cria o cliente e calcula
+ * a hora final do agendamento antes de persistir os dados.
+ *
+ * @param {BookingViewFormValues} values - Dados do formulário de agendamento.
+ * @returns {Promise<{ success: boolean; message: string }>} O resultado da operação.
  */
-async function getBusinessIdFromSession(): Promise<string> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id) {
-    throw new Error("Não autorizado: Usuário não está logado.");
-  }
-
-  const userId = session.user.id;
-
-  // 💡 Lógica de Busca do Business ID
-  // Busca a entidade Business que o User (owner) possui.
-  const business = await db.business.findUnique({
-    where: { ownerId: userId },
-    select: { id: true },
-  });
-
-  if (!business) {
-    throw new Error("Usuário logado não possui um negócio registrado.");
-  }
-
-  return business.id;
-}
-
 export async function createBookingAction(
   values: BookingViewFormValues,
 ): Promise<{ success: boolean; message: string }> {
-  // 1. Validação do Zod
+  // 1. OBTENÇÃO DOS DADOS DE AUTORIZAÇÃO E NEGÓCIO
+  const authData = await getAuthData();
+
+  if (!authData) {
+    // Se não estiver autenticado ou sem businessId, encerra imediatamente.
+    return {
+      success: false,
+      message: "Não autorizado: Sessão inválida ou negócio não configurado.",
+    };
+  }
+
+  const { businessId } = authData;
+
+  // 2. Validação do Zod
   const validationResult = BookingViewSchema.safeParse(values);
 
   if (!validationResult.success) {
     if (validationResult.error instanceof ZodError) {
+      // Retorna uma mensagem amigável em caso de erro de validação
       return {
         success: false,
         message: "Dados de agendamento inválidos. Verifique todos os campos.",
@@ -67,9 +60,7 @@ export async function createBookingAction(
   } = validationResult.data;
 
   try {
-    // A. OBTENÇÃO DO ID DO NEGÓCIO (Requisito do seu schema)
-    const businessId = await getBusinessIdFromSession();
-
+    // 3. ENCONTRAR OU CRIAR CLIENTE
     let customer = await db.customer.findFirst({
       where: {
         name: customerName,
@@ -79,6 +70,7 @@ export async function createBookingAction(
     });
 
     if (!customer) {
+      // Cliente não encontrado, cria um novo
       customer = await db.customer.create({
         data: {
           name: customerName,
@@ -92,7 +84,7 @@ export async function createBookingAction(
 
     const customerId = customer.id;
 
-    // C. BUSCAR DETALHES DO SERVIÇO (duração correta)
+    // 4. BUSCAR DETALHES DO SERVIÇO (duração correta)
     const service = await db.service.findUnique({
       where: { id: serviceId },
       select: {
@@ -104,7 +96,7 @@ export async function createBookingAction(
       return { success: false, message: "Serviço selecionado não existe." };
     }
 
-    // D. CALCULAR HORÁRIOS
+    // 5. CALCULAR HORÁRIOS
     const [hours, minutes] = startTime.split(":").map(Number);
     const startDateTime = new Date(date);
     startDateTime.setHours(hours, minutes, 0, 0);
@@ -112,23 +104,24 @@ export async function createBookingAction(
     // Usa durationInMinutes para calcular o endTime
     const endDateTime = addMinutes(startDateTime, service.durationInMinutes);
 
-    // E. PERSISTÊNCIA (Criação do Booking)
+    // 6. PERSISTÊNCIA (Criação do Booking)
     await db.booking.create({
       data: {
         startTime: startDateTime,
         endTime: endDateTime,
         notes: notes || null,
-        status: "PENDING", // Definido pelo default no schema, mas pode ser explícito.
 
         // Relacionamentos
-        businessId: businessId, // Usando o ID obtido da sessão
+        businessId: businessId, // Usando o ID obtido do utilitário
         serviceId: serviceId,
         customerId: customerId,
       },
     });
 
-    // F. Invalidação de Cache
+    // 7. Invalidação de Cache
     revalidatePath("/appointments");
+    revalidatePath("/bookings");
+    revalidatePath("/dashboard");
 
     return {
       success: true,

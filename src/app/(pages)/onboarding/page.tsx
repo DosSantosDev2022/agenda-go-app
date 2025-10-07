@@ -26,14 +26,10 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center">Configure seu Negócio</h1>
-        <p className="text-muted-foreground text-center mb-6">
-          Precisamos de algumas informações para criar sua página de agendamento.
-        </p>
-        <OnboardingForm />
-      </div>
+    <div className="w-full max-w-lg">
+      <h1 className="text-3xl font-bold mb-4 text-center">Configure seu Negócio</h1>
+      <p className="text-muted-foreground text-center mb-8">Precisamos de algumas informações para criar sua página de agendamento.</p>
+      <OnboardingForm />
     </div>
   );
 }

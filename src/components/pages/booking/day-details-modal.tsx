@@ -22,7 +22,7 @@ export function DayDetailsModal({ isOpen, onOpenChange, date, bookings, onBookin
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
             Agendamentos para {format(date, 'EEEE, dd/MM', { locale: ptBR })}
