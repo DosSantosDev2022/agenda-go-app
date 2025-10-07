@@ -6,22 +6,31 @@ import { Button } from "@/components/ui/button";
 import { useInfiniteCustomersQuery } from "@/hooks/customer/use-infinite-customers-query";
 import { CustomerListItem } from "@/types/customers";
 import { Loader2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { customerColumns } from "./customer-columns";
+import { CustomerSearchInput } from "./customer-search-input";
 
 /**
  * @description Componente que exibe a tabela de clientes com scroll infinito.
  */
 export function CustomerTable() {
+
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
   const {
     data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isError
-  } = useInfiniteCustomersQuery();
+    isError,
+    isFetching
+  } = useInfiniteCustomersQuery(debouncedSearchTerm);
+
+  const handleSearchChange = useCallback((term: string) => {
+    setDebouncedSearchTerm(term);
+  }, []);
 
   // Hook para detectar se o botão "Carregar Mais" está visível
   const { ref: inViewRef, inView } = useInView({
@@ -40,7 +49,10 @@ export function CustomerTable() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
+  const isLoadingInitial = isFetching && allCustomers.length === 0 && !debouncedSearchTerm;
+  const isSearching = isFetching && !!debouncedSearchTerm;
+
+  if (isLoadingInitial) {
     return (
       <div className="flex justify-center items-center h-40">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -58,19 +70,26 @@ export function CustomerTable() {
   }
 
   return (
-    <div className="space-y-4 max-h-[60vh] overflow-y-auto scrollbar-custom ">
-      <DataTable columns={customerColumns} data={allCustomers} />
+    <div className="space-y-4">
+      {/* 3. CAMPO DE BUSCA */}
+      <CustomerSearchInput
+        onSearchChange={handleSearchChange}
+        isSearching={isSearching}
+      />
+      {/* Tabela de Dados */}
+      <div className="max-h-[60vh] overflow-y-auto scrollbar-custom border rounded-lg">
+        <DataTable columns={customerColumns} data={allCustomers} />
+      </div>
 
-      {/* FOOTER DE SCROLL INFINITO */}
+      {/* FOOTER DE SCROLL INFINITO (Mantido) */}
       {hasNextPage && (
         <div
           className="flex flex-col items-center p-4 space-y-2"
-          ref={inViewRef} // Anexa a ref do hook InView
+          ref={inViewRef}
         >
           {isFetchingNextPage ? (
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           ) : (
-            // Botão de Carregar Mais ( fallback caso o scroll não funcione 100% )
             <Button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
@@ -82,15 +101,19 @@ export function CustomerTable() {
         </div>
       )}
 
+      {/* Mensagens de Fim da Lista / Sem Resultados */}
       {!hasNextPage && allCustomers.length > 0 && (
         <p className="text-center text-sm text-muted-foreground pt-4">
           Fim da lista de clientes.
         </p>
       )}
 
-      {!hasNextPage && allCustomers.length === 0 && (
+      {/* 💡 Mensagem de "Nenhum Resultado" */}
+      {!isLoading && allCustomers.length === 0 && (
         <p className="text-center text-lg text-muted-foreground pt-10">
-          Nenhum cliente cadastrado.
+          {debouncedSearchTerm
+            ? `Nenhum cliente encontrado para "${debouncedSearchTerm}".`
+            : "Nenhum cliente cadastrado."}
         </p>
       )}
 

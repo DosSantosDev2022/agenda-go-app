@@ -3,30 +3,69 @@
 
 import db from "@/lib/prisma";
 import { CustomerListItem, CustomersPageData } from "@/types/customers";
+import { Prisma } from "@prisma/client"; // 💡 Importar Prisma para tipagem
 
 const PAGE_SIZE = 50; // Defina o limite de itens por página
 
+// Função utilitária para verificar o formato
 /**
- * @description Busca clientes de forma paginada usando cursor para scroll infinito.
- * O cursor é o ID do último cliente da página anterior.
- * * @param {string} [cursor] - O ID do último item da página anterior.
+ * @description Verifica se uma string se parece com um endereço de e-mail.
+ * @param {string} term - O termo a ser verificado.
+ * @returns {boolean} Se o termo é um e-mail.
+ */
+const isEmail = (term: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(term);
+
+/**
+ * @description Busca clientes de forma paginada usando cursor para scroll infinito, com opção de filtro.
+ * @param {string} [cursor] - O ID do último item da página anterior.
+ * @param {string} [searchTerm] - Termo de busca para filtrar por nome, email ou telefone.
  * @returns {Promise<CustomersPageData>} Os dados da página de clientes e o próximo cursor.
  */
 export async function getCustomersList({
   cursor,
+  searchTerm,
 }: {
   cursor?: string;
+  searchTerm?: string;
 }): Promise<CustomersPageData> {
   try {
-    // 1. Busca os clientes
+    // 1. Constrói o objeto de filtro WHERE
+    // Inicialmente, o filtro é vazio.
+    let where: Prisma.CustomerWhereInput = {};
+    const normalizedSearchTerm = searchTerm?.trim() || "";
+
+    if (normalizedSearchTerm) {
+      // 1. 💡 Lógica Condicional de Busca
+      if (isEmail(normalizedSearchTerm)) {
+        // Se for um e-mail, buscamos por e-mail, exigindo que a string seja IGUAL ou comece com o termo para ser mais preciso
+        where = {
+          email: {
+            contains: normalizedSearchTerm,
+          },
+        };
+      } else {
+        // Se não for um e-mail específico (ou se for uma busca mais ampla), buscamos nos 3 campos
+        where = {
+          OR: [
+            // Busca por nome
+            { name: { startsWith: normalizedSearchTerm } },
+            // Busca por e-mail (como parte do e-mail)
+            { email: { startsWith: normalizedSearchTerm } },
+          ],
+        };
+      }
+    }
+
+    // 2. Busca os clientes
     const customers = await db.customer.findMany({
-      // Busca (PAGE_SIZE + 1) para determinar se há um próximo cursor
       take: PAGE_SIZE + 1,
 
-      // Ordenação: Clientes mais novos primeiro
       orderBy: {
         createdAt: "desc",
       },
+
+      // 🚀 APLICA O FILTRO CONSTRUÍDO
+      where: where,
 
       // Paginação Baseada em Cursor
       ...(cursor && {
@@ -48,22 +87,21 @@ export async function getCustomersList({
       },
     });
 
-    // 2. Determina o próximo cursor e a lista real de clientes
+    // 3. Determina o próximo cursor e a lista real de clientes
     const hasNextPage = customers.length > PAGE_SIZE;
-    // Pega apenas os primeiros 20 clientes
     const items = customers.slice(0, PAGE_SIZE);
 
     // O próximo cursor é o ID do último item da lista
     const nextCursor = hasNextPage ? items[PAGE_SIZE - 1].id : null;
 
-    // 3. Mapeia para o tipo CustomerListItem esperado pelo cliente (sem o _count)
+    // 4. Mapeia para o tipo CustomerListItem
     const customerListItems: CustomerListItem[] = items.map((customer) => ({
       id: customer.id,
       name: customer.name,
       email: customer.email,
       phone: customer.phone,
       createdAt: customer.createdAt,
-      totalAppointments: customer._count.bookings, // Extrai a contagem
+      totalAppointments: customer._count.bookings,
     }));
 
     return {
@@ -72,7 +110,6 @@ export async function getCustomersList({
     };
   } catch (error) {
     console.error("Erro ao buscar lista de clientes:", error);
-    // Em caso de erro, retorna uma lista vazia e sem próximo cursor
     return {
       items: [],
       nextCursor: null,
