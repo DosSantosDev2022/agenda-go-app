@@ -38,6 +38,7 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
     handleCustomerSelect,
     handleCustomerNameChange,
     customerEmail,
+    timeSlots
   } = useAddBookingFormController({ onSuccess });
 
 
@@ -196,7 +197,7 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {TIME_SLOTS.map(time => (
+                    {timeSlots.map(time => (
                       <SelectItem key={time} value={time}>
                         {time}
                       </SelectItem>

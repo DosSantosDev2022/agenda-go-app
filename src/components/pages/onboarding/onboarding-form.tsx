@@ -41,7 +41,7 @@ type OnboardingValues = z.infer<typeof OnboardingSchema>;
  */
 export function OnboardingForm() {
   const router = useRouter();
-  const form = useForm<OnboardingValues>({
+  const form = useForm({
     resolver: zodResolver(OnboardingSchema),
     defaultValues: {
       name: '',
@@ -56,7 +56,8 @@ export function OnboardingForm() {
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (values: OnboardingValues) => {
-    // 💡 A Server Action receberá agora os dados de workingHours validados
+
+    // A Server Action receberá agora os dados de workingHours validados
     const result = await createBusinessAction(values);
 
     if (result.success) {
@@ -108,7 +109,6 @@ export function OnboardingForm() {
               )}
             />
 
-            {/* 💡 NOVO CAMPO DE HORÁRIOS DE TRABALHO */}
             <div className='space-y-2 max-h-[30vh] overflow-y-auto'>
               <FormLabel>Horário de Funcionamento</FormLabel>
               {/* Note que o WorkingHoursInput recebe o control e o nome do campo */}

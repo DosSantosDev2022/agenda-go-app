@@ -69,10 +69,9 @@ model VerificationToken {
 
 // Representa a entidade do negócio (a barbearia, o estúdio, etc.)
 model Business {
-  id   String @id @default(cuid())
-  name String
-  slug String @unique // Usado para a URL pública: app.com/[slug]
-
+  id      String @id @default(cuid())
+  name    String
+  slug    String @unique // Usado para a URL pública: app.com/[slug]
   // Relação 1-para-1 com o dono (Profissional/User)
   ownerId String @unique
   owner   User   @relation(fields: [ownerId], references: [id])

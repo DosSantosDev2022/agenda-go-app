@@ -1,21 +1,23 @@
 import { getDashboardData } from "@/actions/dashboard/dashboard-data";
 import { DashboardHeader, RecentBookings, StatsCards } from "@/components/pages/dashboard";
 import { MonthlyRevenueChart } from "@/components/pages/dashboard/monthly-revenue-chart";
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/prisma";
-import { getAuthData } from "@/utils/get-auth-data";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-  const data = await getDashboardData();
+  // 💡 Use getServerSession para consistência com OnboardingPage
+  const session = await getServerSession(authOptions);
 
-  const authData = await getAuthData();
-
-  if (!authData?.userId) {
+  if (!session?.user?.id) {
+    // Se a sessão for inválida, vá para o login.
     redirect("/auth/login");
   }
 
+  // Busque no Prisma usando o ID da sessão
   const user = await db.user.findUnique({
-    where: { id: authData.userId },
+    where: { id: session.user.id },
     select: { business: { select: { id: true } } },
   });
 
@@ -23,9 +25,17 @@ export default async function DashboardPage() {
 
   // Lógica de Redirecionamento da Página:
   if (!userHasBusiness) {
-    // Se ele NÃO tem negócio, joga para o onboarding
+    // Se não tem negócio, redireciona para o onboarding.
     redirect("/onboarding");
   }
+
+
+
+
+  const data = await getDashboardData();
+
+
+
 
   if (!data) {
     // Tratamento de erro ou redirecionamento caso o getDashboardData retorne null

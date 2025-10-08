@@ -7,19 +7,11 @@ import {
   BookingViewFormValues,
   BookingViewSchema,
 } from "@/types/schema/zod-booking-schema";
+import { generateTimeSlots } from "@/utils/time-slots-generator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback } from "react"; // Importar React para React.ChangeEvent
+import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-
-// MOCK para horários disponíveis
-export const TIME_SLOTS = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "13:00",
-  "14:00",
-  "15:00",
-];
+import { useBusinessHoursQuery } from "../business/use-business-hours-query";
 
 /**
  * @description Hook de controle para o componente AddABookingForm.
@@ -33,7 +25,17 @@ export function useAddBookingFormController({
 }) {
   // 1. Hooks de Dados e Mutação
   const { mutate, isPending } = useCreateBooking();
-  const { data: services, isLoading, isError } = useServicesQuery();
+  const {
+    data: services,
+    isLoading: isLoadingServices,
+    isError: isErrorServices,
+  } = useServicesQuery();
+  // Busca os dados de horário e duração do slot do negócio
+  const {
+    data: businessHours,
+    isLoading: isLoadingHours,
+    isError: isErrorHours,
+  } = useBusinessHoursQuery();
 
   // 2. Configuração do React Hook Form
   const form = useForm<BookingViewFormValues>({
@@ -51,7 +53,54 @@ export function useAddBookingFormController({
 
   const { reset, setValue, handleSubmit, getValues, control, watch } = form;
 
-  // 3. Lógica de Submissão
+  // 3. Observa os campos de data no formulário para gerar slots
+  const selectedDate = watch("date");
+
+  // Lógica de Geração e Filtragem de Time Slots
+  /**
+   * @description Calcula os slots de horário disponíveis com base na data selecionada,
+   * no horário de funcionamento do dia e na duração do slot.
+   * @returns {string[]} Lista de horários disponíveis formatados ("HH:MM").
+   */
+  const timeSlots = useMemo(() => {
+    // Retorna vazio se:
+    // 1. Data não selecionada.
+    // 2. Dados de horário não carregados ou vazios.
+    // 3. slotDuration não definido (o que indica que o dado do DB está incompleto).
+    if (
+      !selectedDate ||
+      !businessHours?.workingHours ||
+      !businessHours?.slotDuration
+    ) {
+      return [];
+    }
+
+    // 1. Encontra o dia da semana (0=Dom, 6=Sáb) da data selecionada
+    const dayOfWeek = selectedDate.getDay();
+
+    // 2. Encontra o horário de funcionamento para esse dia
+    const hoursForDay = businessHours.workingHours.find(
+      (day) => day.dayOfWeek === dayOfWeek,
+    );
+
+    // Se o negócio estiver fechado nesse dia (não há horário registrado)
+    if (!hoursForDay) {
+      // Limpa o startTime se o dia for inválido
+      if (getValues("startTime") !== "") {
+        setValue("startTime", "", { shouldValidate: true });
+      }
+      return [];
+    }
+
+    // 3. Gera os slots usando a duração do slot
+    return generateTimeSlots(
+      hoursForDay.startTime,
+      hoursForDay.endTime,
+      businessHours.slotDuration,
+    );
+  }, [selectedDate, businessHours, getValues, setValue]);
+
+  // 4. Lógica de Submissão
   /**
    * @description Manipula a submissão do formulário, integrando com a mutação.
    * @param values Os dados validados do formulário.
@@ -71,7 +120,7 @@ export function useAddBookingFormController({
     [mutate, reset, onSuccess],
   );
 
-  // 4. Lógica de Seleção de Cliente
+  // 5. Lógica de Seleção de Cliente
   /**
    * @description Função para preencher Email e Telefone ao selecionar um cliente.
    */
@@ -85,7 +134,7 @@ export function useAddBookingFormController({
     [setValue],
   );
 
-  // 5. Lógica de Limpeza ao Digitar (para o campo nome do cliente)
+  // 6. Lógica de Limpeza ao Digitar (para o campo nome do cliente)
   /**
    * @description Sobrescreve o onChange padrão para limpar Email/Telefone
    * se o usuário começar a digitar, em vez de selecionar na Combobox.
@@ -96,42 +145,54 @@ export function useAddBookingFormController({
       const currentName = getValues("customerName");
 
       // 1. Atualiza o valor do RHF
-      // Esta é a função original que o RHF passaria para o field.onChange
-      control._formState.isDirty = true; // Força a detecção de 'dirty' se necessário, embora o setValue/onChange já deva fazer isso.
+      control._formState.isDirty = true;
       setValue("customerName", newName, {
         shouldValidate: true,
         shouldDirty: true,
       });
 
       // 2. Limpa Email/Telefone se o usuário estiver digitando
-      // A comparação é importante para não limpar se for um valor vindo do Select (que já chamou handleCustomerSelect)
       if (newName !== currentName) {
         setValue("customerEmail", "", { shouldValidate: true });
         setValue("customerPhone", "", { shouldValidate: true });
       }
     },
     [setValue, getValues, control],
-  ); // Dependências do RHF
+  );
 
-  // 6. Variáveis de Estado Derivado
+  // 7. Variáveis de Estado Derivado
   const isServicesDisabled =
-    isLoading || isPending || isError || !services || services.length === 0;
+    isLoadingServices ||
+    isPending ||
+    isErrorServices ||
+    !services ||
+    services.length === 0;
 
-  // 7. Retorno do Hook
+  // Desabilita os slots se: carregando, com erro, data não selecionada, ou lista de slots vazia.
+  const isTimeSlotsDisabled =
+    isLoadingHours || isErrorHours || !selectedDate || timeSlots.length === 0;
+
+  console.log("slots:", timeSlots);
+
+  // 8. Retorno do Hook
   return {
     form,
-    onSubmit: handleSubmit(onSubmit), // Lógica do RHF acoplada ao onSubmit
+    onSubmit: handleSubmit(onSubmit),
     isPending,
+    // Dados de Serviços
     services,
-    isLoadingServices: isLoading,
-    isErrorServices: isError,
+    isLoadingServices,
+    isErrorServices,
     isServicesDisabled,
+    // Dados de Horários
+    timeSlots,
+    isLoadingHours,
+    isErrorHours,
+    isTimeSlotsDisabled,
+    // Funções de Manipulação
     handleCustomerSelect,
     handleCustomerNameChange,
-    customerEmail: watch("customerEmail"), // Expondo apenas o que é necessário para a Combobox
-    customerNameField: form.control, // Passando o control diretamente para o FormField (opcional, mas comum)
+    customerEmail: watch("customerEmail"),
+    customerNameField: form.control,
   };
 }
-
-// Re-exporta o TIME_SLOTS para uso na UI
-// export { TIME_SLOTS };
