@@ -1,20 +1,21 @@
 import { getDashboardData } from "@/actions/dashboard/dashboard-data";
 import { DashboardHeader, RecentBookings, StatsCards } from "@/components/pages/dashboard";
-import { authOptions } from "@/lib/auth";
+import { MonthlyRevenueChart } from "@/components/pages/dashboard/monthly-revenue-chart";
 import db from "@/lib/prisma";
-import { getServerSession } from "next-auth";
+import { getAuthData } from "@/utils/get-auth-data";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
-  const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) {
-    redirect("/auth/login"); // Redirecionamento extra de segurança
+  const authData = await getAuthData();
+
+  if (!authData?.userId) {
+    redirect("/auth/login");
   }
 
   const user = await db.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: authData.userId },
     select: { business: { select: { id: true } } },
   });
 
@@ -37,11 +38,10 @@ export default async function DashboardPage() {
     );
   }
 
-  const { totalBookings, totalCustomers, totalRevenue, recentBookings } = data;
+  const { totalBookings, totalCustomers, totalRevenue, recentBookings, monthlyRevenue } = data;
 
   return (
     <div className="space-y-8">
-      {/* 1. Cabeçalho de Boas-vindas (Client Component - para futuras interações, mas simples por agora) */}
       <DashboardHeader />
 
       {/* 2. Cards de Estatísticas */}
@@ -51,9 +51,11 @@ export default async function DashboardPage() {
         totalRevenue={totalRevenue}
       />
 
-      {/* 3. Seção de Agendamentos Recentes */}
+      {/* 3. Seção Principal (Agendamentos Recentes e Gráfico) */}
+      {/* Aqui estamos usando grid-cols-1 para mobile e lg:grid-cols-3 para telas grandes */}
       <div className="grid grid-cols-1 gap-8">
-        {/* Agendamentos Recentes ocupa 2/3 da largura em telas grandes */}
+
+        {/* Agendamentos Recentes (ocupa 2/3 da largura em telas grandes) */}
         <div className="lg:col-span-2">
           <h2 className="text-2xl font-bold tracking-tight mb-4">
             Agendamentos Recentes
@@ -61,14 +63,9 @@ export default async function DashboardPage() {
           <RecentBookings recentBookings={recentBookings} />
         </div>
 
-        {/* Espaço para gráficos ou outros cards (1/3) */}
-        <div className="lg:col-span-1">
-          <h2 className="text-2xl font-bold tracking-tight mb-4">
-            Receitas mensais
-          </h2>
-          <div className="p-6 border rounded-lg h-64 flex items-center justify-center text-muted-foreground">
-            Gráfico de Receita Mensal
-          </div>
+        {/* 4. Substituir a div placeholder pelo componente de gráfico */}
+        <div className="lg:col-span-2">
+          <MonthlyRevenueChart data={monthlyRevenue} />
         </div>
       </div>
     </div>

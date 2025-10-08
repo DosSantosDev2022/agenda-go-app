@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react"; // Requer use client para obter a 
 export function DashboardHeader() {
   // Use useSession para pegar o nome e dar as boas-vindas
   const { data: session } = useSession();
-  const userName = session?.user?.name || "Profissional";
+  const userName = session?.user?.name || "";
 
   return (
     <header>

@@ -2,6 +2,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatPrice } from "@/utils";
 import { CalendarCheck, DollarSign, Users } from "lucide-react";
 
 interface StatsCardsProps {
@@ -10,17 +11,6 @@ interface StatsCardsProps {
   totalRevenue: number;
 }
 
-/**
- * @description Formata o valor de centavos para Real (BRL).
- * @param {number} amount - Valor em centavos.
- * @returns {string} Valor formatado.
- */
-function formatCurrency(amount: number): string {
-  return (amount / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
 
 /**
  * @description Componente de exibição de cartões de estatísticas principais.
@@ -34,7 +24,7 @@ export function StatsCards({
   const stats = [
     {
       title: "Receita Potencial",
-      value: formatCurrency(totalRevenue),
+      value: formatPrice(totalRevenue),
       icon: DollarSign,
       description: "Agendamentos confirmados e pendentes.",
     },
