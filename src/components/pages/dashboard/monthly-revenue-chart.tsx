@@ -21,7 +21,7 @@ interface MonthlyRevenueChartProps {
  * @param {MonthlyRevenueChartProps} props - As propriedades do componente.
  * @returns {JSX.Element} O componente de gráfico de receita mensal.
  */
-export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
+const MonthlyRevenueChart = ({ data }: MonthlyRevenueChartProps) => {
 
   const CustomLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -81,3 +81,5 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
     </Card>
   );
 }
+
+export { MonthlyRevenueChart };

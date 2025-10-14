@@ -8,7 +8,7 @@ import { format } from "date-fns";
 /**
  * @description Definição das colunas da tabela de clientes.
  */
-export const customerColumns: ColumnDef<CustomerListItem>[] = [
+const customerColumns: ColumnDef<CustomerListItem>[] = [
   {
     accessorKey: "name",
     header: "Nome",
@@ -42,3 +42,5 @@ export const customerColumns: ColumnDef<CustomerListItem>[] = [
     ),
   },
 ];
+
+export { customerColumns };

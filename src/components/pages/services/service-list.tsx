@@ -11,7 +11,7 @@ import { AlertCircle } from "lucide-react";
 /**
  * @description Componente para buscar e exibir a lista de serviços.
  */
-export function ServiceList() {
+const ServiceList = () => {
   // Usando React Query para data fetching no lado do cliente
   const { data: services, isLoading, error } = useServicesQuery();
 
@@ -57,3 +57,5 @@ export function ServiceList() {
     />
   );
 }
+
+export { ServiceList };

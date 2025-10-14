@@ -5,7 +5,7 @@ import { formatPrice } from "@/utils/format-price"; // Assumindo uma função ut
 import { ColumnDef } from "@tanstack/react-table";
 import { ServiceActions } from "./service-actions";
 
-export const serviceColumns: ColumnDef<ServiceListItem>[] = [
+const serviceColumns: ColumnDef<ServiceListItem>[] = [
   {
     accessorKey: "name",
     header: "Serviço",
@@ -35,3 +35,5 @@ export const serviceColumns: ColumnDef<ServiceListItem>[] = [
     size: 50,
   },
 ];
+
+export { serviceColumns };

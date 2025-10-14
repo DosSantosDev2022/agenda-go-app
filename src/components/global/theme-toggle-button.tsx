@@ -24,7 +24,7 @@ interface ThemeToggleProps {
  * @param {ThemeToggleProps} props - As propriedades do componente.
  * @returns {JSX.Element | null} O botão de alternância de tema ou null durante a montagem.
  */
-export function ThemeToggleButton({ showLabel = false, className }: ThemeToggleProps) {
+const ThemeToggleButton = ({ showLabel = false, className }: ThemeToggleProps) => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -72,3 +72,5 @@ export function ThemeToggleButton({ showLabel = false, className }: ThemeToggleP
     </Button>
   );
 }
+
+export { ThemeToggleButton };

@@ -11,11 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui";
-import { signOut, useSession } from "next-auth/react"; // Use o client-side hook aqui
 import { LogOut, User as UserIcon } from "lucide-react";
+import { signOut, useSession } from "next-auth/react"; // Use o client-side hook aqui
 import Link from "next/link";
 
-export function UserNav() {
+const UserNav = () => {
   const { data: session } = useSession(); // Pega a sessão no lado do cliente
 
   if (!session?.user) {
@@ -66,3 +66,5 @@ export function UserNav() {
     </DropdownMenu>
   );
 }
+
+export { UserNav };

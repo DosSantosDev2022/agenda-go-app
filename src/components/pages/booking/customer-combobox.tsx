@@ -26,11 +26,11 @@ interface CustomerComboboxProps {
 /**
  * @description Componente de Combobox para busca e seleção de clientes recorrentes.
  */
-export function CustomerCombobox({
+const CustomerCombobox = ({
   field,
   onCustomerSelect,
   isPending,
-}: CustomerComboboxProps) {
+}: CustomerComboboxProps) => {
   const {
     open,
     setOpen,
@@ -98,3 +98,5 @@ export function CustomerCombobox({
     </Popover>
   );
 }
+
+export { CustomerCombobox };

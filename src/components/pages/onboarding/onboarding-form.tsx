@@ -59,7 +59,7 @@ type BusinessCreationValues = Omit<OnboardingValues, 'slotDuration'> & {
 /**
  * @description Componente de formulário para configurar o negócio durante o Onboarding.
  */
-export function OnboardingForm() {
+const OnboardingForm = () => {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(OnboardingSchema),
@@ -185,3 +185,5 @@ export function OnboardingForm() {
     </Card>
   );
 }
+
+export { OnboardingForm };

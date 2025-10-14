@@ -12,7 +12,7 @@ import { DayDetailsModal } from "./day-details-modal";
 /**
  * @description Componente principal da Agenda, possui um formato de calendário renderizando os agendamentos de cada dia do mês.
  */
-export function BookingView() {
+const BookingView = () => {
   const {
     // Dados
     days,
@@ -91,3 +91,5 @@ export function BookingView() {
     </div>
   );
 }
+
+export { BookingView };

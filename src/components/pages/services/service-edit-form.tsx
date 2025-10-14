@@ -24,7 +24,7 @@ interface EditServiceFormProps {
 /**
  * @description Formulário para editar um serviço existente.
  */
-export function EditServiceForm({ service, onSuccess }: EditServiceFormProps) {
+const EditServiceForm = ({ service, onSuccess }: EditServiceFormProps) => {
   const { mutate, isPending } = useUpdateService();
 
   // Inicializa o formulário com os dados do serviço
@@ -129,3 +129,5 @@ export function EditServiceForm({ service, onSuccess }: EditServiceFormProps) {
     </Form>
   );
 }
+
+export { EditServiceForm };

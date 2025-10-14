@@ -17,7 +17,7 @@ interface DayDetailsModalProps {
   onBookingClick: (bookingId: string) => void;
 }
 
-export function DayDetailsModal({ isOpen, onOpenChange, date, bookings, onBookingClick }: DayDetailsModalProps) {
+const DayDetailsModal = ({ isOpen, onOpenChange, date, bookings, onBookingClick }: DayDetailsModalProps) => {
   if (!date) return null;
 
   return (
@@ -61,3 +61,5 @@ export function DayDetailsModal({ isOpen, onOpenChange, date, bookings, onBookin
     </Dialog>
   );
 }
+
+export { DayDetailsModal };

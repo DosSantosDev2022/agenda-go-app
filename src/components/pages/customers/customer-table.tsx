@@ -11,7 +11,7 @@ import { CustomerSearchInput } from "./customer-search-input";
 /**
  * @description Componente que exibe a tabela de clientes com scroll infinito.
  */
-export function CustomerTable() {
+const CustomerTable = () => {
   const {
     allCustomers,
     inViewRef,
@@ -94,3 +94,5 @@ export function CustomerTable() {
     </div>
   );
 }
+
+export { CustomerTable };

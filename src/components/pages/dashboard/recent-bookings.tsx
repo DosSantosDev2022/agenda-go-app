@@ -25,7 +25,7 @@ interface RecentBookingsProps {
  * @description Componente de exibição da lista de agendamentos recentes.
  * @param {RecentBookingsProps} props - Propriedades contendo a lista de agendamentos.
  */
-export function RecentBookings({ recentBookings }: RecentBookingsProps) {
+const RecentBookings = ({ recentBookings }: RecentBookingsProps) => {
   if (recentBookings.length === 0) {
     return (
       <div className="p-6 border rounded-lg text-center text-muted-foreground">
@@ -67,3 +67,5 @@ export function RecentBookings({ recentBookings }: RecentBookingsProps) {
     </div>
   );
 }
+
+export { RecentBookings };

@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react"; // Requer use client para obter a 
  * @description Componente de cabeçalho do Dashboard.
  * É um Client Component para poder usar hooks como useSession e garantir interações futuras.
  */
-export function DashboardHeader() {
+const DashboardHeader = () => {
   // Use useSession para pegar o nome e dar as boas-vindas
   const { data: session } = useSession();
   const userName = session?.user?.name || "";
@@ -23,3 +23,5 @@ export function DashboardHeader() {
     </header>
   );
 }
+
+export { DashboardHeader };

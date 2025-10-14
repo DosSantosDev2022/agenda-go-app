@@ -27,7 +27,7 @@ const navItems = [
   }
 ];
 
-export function Sidebar() {
+const Sidebar = () => {
   return (
     // Classes de shadcn/ui para cores e bordas
     <aside className="hidden h-screen flex-col border-r bg-background lg:flex lg:w-72">
@@ -42,3 +42,5 @@ export function Sidebar() {
     </aside>
   );
 }
+
+export { Sidebar };

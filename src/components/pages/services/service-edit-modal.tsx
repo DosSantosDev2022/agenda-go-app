@@ -14,7 +14,7 @@ interface ServiceDetailsModalProps {
 /**
  * @description Modal que exibe os detalhes de um serviço e permite a edição.
  */
-export function ServiceEditModal({ isOpen, onOpenChange, service }: ServiceDetailsModalProps) {
+const ServiceEditModal = ({ isOpen, onOpenChange, service }: ServiceDetailsModalProps) => {
 
 
   return (
@@ -31,3 +31,5 @@ export function ServiceEditModal({ isOpen, onOpenChange, service }: ServiceDetai
     </Dialog>
   );
 }
+
+export { ServiceEditModal };

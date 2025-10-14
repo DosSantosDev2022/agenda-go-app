@@ -22,7 +22,7 @@ interface AddBookingViewFormProps {
   onSuccess: () => void;
 }
 
-export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
+const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
   const {
     form,
     onSubmit,
@@ -240,3 +240,5 @@ export function AddABookingForm({ onSuccess }: AddBookingViewFormProps) {
     </Form>
   );
 }
+
+export { AddABookingForm };

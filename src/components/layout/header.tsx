@@ -32,7 +32,7 @@ const navItems = [
   }
 ];
 
-export function Header() {
+const Header = () => {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8">
@@ -66,3 +66,5 @@ export function Header() {
     </header>
   );
 }
+
+export { Header };

@@ -17,7 +17,7 @@ interface ServiceActionsProps {
 /**
  * @description Componente de ações para cada serviço na tabela.
  */
-export function ServiceActions({ service }: ServiceActionsProps) {
+const ServiceActions = ({ service }: ServiceActionsProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Estado para o modal de edição
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); // Estado para o modal de exclusão
 
@@ -110,3 +110,5 @@ export function ServiceActions({ service }: ServiceActionsProps) {
     </>
   );
 }
+
+export { ServiceActions };

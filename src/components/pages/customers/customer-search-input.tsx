@@ -20,7 +20,7 @@ interface CustomerSearchInputProps {
 /**
  * @description Componente de Input de busca isolado. Mantém o foco e notifica o pai apenas com o valor debounced.
  */
-export function CustomerSearchInput({ onSearchChange, isSearching }: CustomerSearchInputProps) {
+const CustomerSearchInput = ({ onSearchChange, isSearching }: CustomerSearchInputProps) => {
   // 1. Estado Local, dissociado da query do React Query
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -53,3 +53,5 @@ export function CustomerSearchInput({ onSearchChange, isSearching }: CustomerSea
     </div>
   );
 }
+
+export { CustomerSearchInput };

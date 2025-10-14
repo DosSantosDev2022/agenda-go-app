@@ -16,11 +16,11 @@ interface StatsCardsProps {
  * @description Componente de exibição de cartões de estatísticas principais.
  * @param {StatsCardsProps} props - Propriedades contendo as métricas do dashboard.
  */
-export function StatsCards({
+const StatsCards = ({
   totalBookings,
   totalCustomers,
   totalRevenue,
-}: StatsCardsProps) {
+}: StatsCardsProps) => {
   const stats = [
     {
       title: "Receita Potencial",
@@ -64,3 +64,5 @@ export function StatsCards({
     </div>
   );
 }
+
+export { StatsCards };

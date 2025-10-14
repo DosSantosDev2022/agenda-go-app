@@ -26,7 +26,7 @@ interface BookingDetailsModalProps {
  * @param {BookingDetailsModalProps} props As propriedades do componente.
  * @returns {JSX.Element | null} O componente modal.
  */
-export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDetailsModalProps) {
+const BookingDetailsModal = ({ isOpen, onOpenChange, booking }: BookingDetailsModalProps) => {
 
   if (!booking) return null;
 
@@ -141,3 +141,5 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
     </Dialog>
   );
 }
+
+export { BookingDetailsModal };

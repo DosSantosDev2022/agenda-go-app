@@ -1,10 +1,10 @@
 'use client';
 
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
-import { LucideIcon } from 'lucide-react';
 
 interface DashboardNavProps {
   items: {
@@ -14,7 +14,7 @@ interface DashboardNavProps {
   }[];
 }
 
-export function DashboardNav({ items }: DashboardNavProps) {
+const DashboardNav = ({ items }: DashboardNavProps) => {
   const pathname = usePathname();
 
   if (!items?.length) {
@@ -39,3 +39,5 @@ export function DashboardNav({ items }: DashboardNavProps) {
     </nav>
   );
 }
+
+export { DashboardNav };

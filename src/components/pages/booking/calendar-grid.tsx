@@ -15,7 +15,7 @@ interface CalendarGridProps {
  * @description Renderiza a grade de dias do calendário (corpo).
  * @param {CalendarGridProps} props - Propriedades contendo os dias e o callback de clique.
  */
-export function CalendarGrid({ days, onDayClick }: CalendarGridProps) {
+const CalendarGrid = ({ days, onDayClick }: CalendarGridProps) => {
   const weekdays = getWeekdays();
 
   return (
@@ -89,3 +89,5 @@ export function CalendarGrid({ days, onDayClick }: CalendarGridProps) {
     </div>
   );
 }
+
+export { CalendarGrid };

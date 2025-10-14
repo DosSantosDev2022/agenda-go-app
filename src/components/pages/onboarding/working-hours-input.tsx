@@ -30,7 +30,7 @@ const dayLabels = {
  * @description Componente para definir os horários de trabalho semanais.
  * @param {WorkingHoursInputProps} props - Props do componente.
  */
-export function WorkingHoursInput({ control, name }: WorkingHoursInputProps) {
+const WorkingHoursInput = ({ control, name }: WorkingHoursInputProps) => {
   // useFieldArray gerencia a lista de dias dentro do RHF
   const { fields } = useFieldArray({
     control,
@@ -136,3 +136,5 @@ export function WorkingHoursInput({ control, name }: WorkingHoursInputProps) {
     </div>
   );
 }
+
+export { WorkingHoursInput };
