@@ -35,9 +35,17 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
     fullTimeRange,
     handleConfirmBooking,
     handleCancelBooking,
-    currentStatus
+    currentStatus,
+    isLoadingSlotCheck,
+    isSlotNowOccupied
     // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
   } = useBookingDetailsController(booking, onOpenChange);
+
+  // Define a condição para desabilitar o botão de Confirmação
+  const disableConfirm =
+    booking.status === 'CONFIRMED' ||
+    isSlotNowOccupied || // Desabilita se o slot for ocupado por outra pessoa
+    isLoadingSlotCheck; // Desabilita durante a checagem
 
 
   return (
@@ -113,7 +121,7 @@ export function BookingDetailsModal({ isOpen, onOpenChange, booking }: BookingDe
             variant="secondary"
             className="w-full sm:w-auto"
             onClick={() => handleConfirmBooking()}
-            disabled={booking.status === 'CONFIRMED'}
+            disabled={disableConfirm}
           >
             <CircleCheck className="mr-2 h-4 w-4" />
             {booking.status === 'CONFIRMED' ? 'Agenda confirmada' : 'Confirmar agendamento'}

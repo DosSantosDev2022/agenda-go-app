@@ -20,8 +20,7 @@ export function useCreateBooking() {
     onSuccess: (result) => {
       if (result.success) {
         // Invalida a query da lista de agendamentos para forçar o refetch dos novos dados
-        // Assumindo que a chave de query da sua agenda é ['appointments']
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["bookingsList"] });
 
         toast.success("Agendamento criado!", { description: result.message });
       } else {

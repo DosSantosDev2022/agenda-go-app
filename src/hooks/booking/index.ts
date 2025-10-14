@@ -4,3 +4,6 @@ export * from "./use-booking-details-controller";
 export * from "./use-booking-view-controller";
 export * from "./use-create-booking";
 export * from "./use-customer-combobox-controller";
+export * from "./use-daily-availability-query";
+export * from "./use-existing-bookings-query";
+export * from "./use-is-slot-occupied-query";

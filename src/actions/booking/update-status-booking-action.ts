@@ -78,7 +78,7 @@ export async function updateBookingStatus(
     await db.booking.update({
       where: {
         id: bookingId,
-        businessId: businessId, // 🛑 REPETIR o businessId garante que a operação é atômica e segura.
+        businessId: businessId,
       },
       data: { status },
     });

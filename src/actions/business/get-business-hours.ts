@@ -23,7 +23,7 @@ export interface DayWorkingHours {
  */
 export interface BusinessHours {
   workingHours: DayWorkingHours[];
-  slotDuration: number; // ✅ Incluído novamente
+  slotDurationInMinutes: number; // ✅ Incluído novamente
 }
 
 /**
@@ -40,7 +40,7 @@ export async function getBusinessHours(): Promise<BusinessHours | null> {
   const businessWithHours = await db.business.findUnique({
     where: { id: authData.businessId },
     select: {
-      slotDuration: true,
+      slotDurationInMinutes: true,
       workingHours: {
         select: {
           dayOfWeek: true,
@@ -51,13 +51,13 @@ export async function getBusinessHours(): Promise<BusinessHours | null> {
     },
   });
 
-  if (!businessWithHours || !businessWithHours.slotDuration) {
+  if (!businessWithHours || !businessWithHours.slotDurationInMinutes) {
     // Retorna null se não encontrar o negócio ou se o slotDuration for 0/null
     return null;
   }
 
   return {
     workingHours: businessWithHours.workingHours as DayWorkingHours[],
-    slotDuration: businessWithHours.slotDuration,
+    slotDurationInMinutes: businessWithHours.slotDurationInMinutes,
   };
 }

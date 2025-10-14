@@ -13,7 +13,7 @@ export function useAppointmentsBookings(
 ): UseQueryResult<BookingAgenda[], Error> {
   const query = useQuery<BookingAgenda[], Error>({
     // Usa uma query key estável, que muda apenas com a alteração das datas.
-    queryKey: ["appointments", startDate, endDate],
+    queryKey: ["bookingsList", startDate, endDate],
 
     // Chama a Server Action (getBookings) diretamente como queryFn.
     queryFn: () => getBookings(startDate, endDate),

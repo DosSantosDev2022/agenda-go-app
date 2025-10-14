@@ -2,6 +2,7 @@
 'use client';
 
 import { createBusinessAction } from '@/actions/onboarding/onboarding-action';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -26,15 +27,34 @@ const DEFAULT_WORKING_HOURS: WorkingHour[] = [
   { day: 'SUNDAY', isWorking: false, startTime: undefined, endTime: undefined },
 ];
 
+// Opções de Duração de Slot para o Select
+const SLOT_DURATION_OPTIONS = [
+  { value: '15', label: '15 Minutos' },
+  { value: '30', label: '30 Minutos (Padrão)' },
+  { value: '45', label: '45 Minutos' },
+  { value: '60', label: '1 Hora' },
+];
+
 // Schema de validação ATUALIZADO com Zod
 const OnboardingSchema = z.object({
   name: z.string().min(3, { message: 'O nome do negócio deve ter pelo menos 3 caracteres.' }),
   slug: z.string().min(3, { message: 'A URL deve ter pelo menos 3 caracteres.' })
     .regex(/^[a-z0-9-]+$/, { message: 'Use apenas letras minúsculas, números e hifens.' }),
   workingHours: WorkingHoursArraySchema.min(7, { message: 'Você deve configurar os 7 dias da semana.' }),
+  slotDuration: z.string({
+    error: "A duração padrão do serviço é obrigatória.",
+  })
+    .refine(val => ['15', '30', '45', '60'].includes(val), {
+      message: 'Duração de slot inválida.',
+    }),
 });
 
 type OnboardingValues = z.infer<typeof OnboardingSchema>;
+
+// Tipo final para a Server Action, onde slotDuration é number
+type BusinessCreationValues = Omit<OnboardingValues, 'slotDuration'> & {
+  slotDuration: number;
+};
 
 /**
  * @description Componente de formulário para configurar o negócio durante o Onboarding.
@@ -48,6 +68,7 @@ export function OnboardingForm() {
       slug: '',
       //  Valor default para os horários
       workingHours: DEFAULT_WORKING_HOURS,
+      slotDuration: '30',
     },
     // Modo de validação quando o usuário sai do campo.
     mode: 'onBlur',
@@ -57,8 +78,13 @@ export function OnboardingForm() {
 
   const onSubmit = async (values: OnboardingValues) => {
 
+    const finalValues: BusinessCreationValues = {
+      ...values,
+      slotDuration: parseInt(values.slotDuration, 10) // Convertendo a string do Select para number
+    }
+
     // A Server Action receberá agora os dados de workingHours validados
-    const result = await createBusinessAction(values);
+    const result = await createBusinessAction(finalValues);
 
     if (result.success) {
       toast.success('Negócio configurado com sucesso!');
@@ -69,11 +95,11 @@ export function OnboardingForm() {
   };
 
   return (
-    <Card className="max-w-xl mx-auto">
+    <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Informações do Negócio</CardTitle>
       </CardHeader>
-      <CardContent className="max-h-[70vh] overflow-y-auto">
+      <CardContent className="max-h-[50vh] overflow-y-auto scrollbar-custom">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {/* CAMPOS NAME E SLUG (MANTIDOS) */}
@@ -109,7 +135,32 @@ export function OnboardingForm() {
               )}
             />
 
-            <div className='space-y-2 max-h-[30vh] overflow-y-auto'>
+            <FormField
+              control={form.control}
+              name="slotDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Intervalos dos agendamentos</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione o intervalo entre os agendamentos" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {SLOT_DURATION_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className='space-y-2 max-h-[30vh] overflow-y-auto scrollbar-custom p-1'>
               <FormLabel>Horário de Funcionamento</FormLabel>
               {/* Note que o WorkingHoursInput recebe o control e o nome do campo */}
               <WorkingHoursInput control={form.control} name="workingHours" />

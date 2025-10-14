@@ -11,7 +11,6 @@ export const BookingViewSchema = z.object({
     .string()
     .min(2, "O nome é obrigatório e deve ter pelo menos 2 caracteres."),
   customerEmail: z
-    .string()
     .email("Formato de e-mail inválido.")
     .min(1, "O e-mail é obrigatório."),
   // Simples validação de telefone. Você pode usar Regex mais complexo se necessário.

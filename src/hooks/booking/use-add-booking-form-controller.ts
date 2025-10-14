@@ -11,7 +11,7 @@ import { generateTimeSlots } from "@/utils/time-slots-generator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useBusinessHoursQuery } from "../business/use-business-hours-query";
+import { useDailyAvailabilityQuery } from "./use-daily-availability-query";
 
 /**
  * @description Hook de controle para o componente AddABookingForm.
@@ -25,17 +25,12 @@ export function useAddBookingFormController({
 }) {
   // 1. Hooks de Dados e Mutação
   const { mutate, isPending } = useCreateBooking();
+  // Hook para buscar serviços disponíveis
   const {
     data: services,
     isLoading: isLoadingServices,
     isError: isErrorServices,
   } = useServicesQuery();
-  // Busca os dados de horário e duração do slot do negócio
-  const {
-    data: businessHours,
-    isLoading: isLoadingHours,
-    isError: isErrorHours,
-  } = useBusinessHoursQuery();
 
   // 2. Configuração do React Hook Form
   const form = useForm<BookingViewFormValues>({
@@ -56,35 +51,41 @@ export function useAddBookingFormController({
   // 3. Observa os campos de data no formulário para gerar slots
   const selectedDate = watch("date");
 
+  const {
+    data: availability,
+    isLoading: isLoadingAvailability,
+    isError: isErrorAvailability,
+  } = useDailyAvailabilityQuery(selectedDate);
+
+  // Cria um Set (Otimização) com os horários ocupados para consulta rápida
+  const occupiedTimeSlots = useMemo(
+    () => new Set(availability?.occupiedSlots || []),
+    [availability],
+  );
+
   // Lógica de Geração e Filtragem de Time Slots
   /**
    * @description Calcula os slots de horário disponíveis com base na data selecionada,
    * no horário de funcionamento do dia e na duração do slot.
    * @returns {string[]} Lista de horários disponíveis formatados ("HH:MM").
    */
+
   const timeSlots = useMemo(() => {
-    // Retorna vazio se:
-    // 1. Data não selecionada.
-    // 2. Dados de horário não carregados ou vazios.
-    // 3. slotDuration não definido (o que indica que o dado do DB está incompleto).
-    if (
-      !selectedDate ||
-      !businessHours?.workingHours ||
-      !businessHours?.slotDuration
-    ) {
+    // 1. CHEQUES DE RETORNO
+    if (!selectedDate || !availability) {
       return [];
     }
 
-    // 1. Encontra o dia da semana (0=Dom, 6=Sáb) da data selecionada
-    const dayOfWeek = selectedDate.getDay();
+    // Desestrutura os dados do hook unificado
+    const { startTime, endTime, slotDurationInMinutes } = availability;
 
-    // 2. Encontra o horário de funcionamento para esse dia
-    const hoursForDay = businessHours.workingHours.find(
-      (day) => day.dayOfWeek === dayOfWeek,
-    );
-
-    // Se o negócio estiver fechado nesse dia (não há horário registrado)
-    if (!hoursForDay) {
+    // Se o negócio estiver fechado nesse dia, ou dados incompletos
+    if (
+      !startTime ||
+      !endTime ||
+      !slotDurationInMinutes ||
+      slotDurationInMinutes <= 0
+    ) {
       // Limpa o startTime se o dia for inválido
       if (getValues("startTime") !== "") {
         setValue("startTime", "", { shouldValidate: true });
@@ -92,13 +93,20 @@ export function useAddBookingFormController({
       return [];
     }
 
-    // 3. Gera os slots usando a duração do slot
-    return generateTimeSlots(
-      hoursForDay.startTime,
-      hoursForDay.endTime,
-      businessHours.slotDuration,
+    // 1. Gera TODOS os slots possíveis
+    const allPossibleSlots = generateTimeSlots(
+      startTime,
+      endTime,
+      slotDurationInMinutes,
     );
-  }, [selectedDate, businessHours, getValues, setValue]);
+
+    // 2. FILTRA OS SLOTS JÁ OCUPADOS
+    const filteredSlots = allPossibleSlots.filter(
+      (slot) => !occupiedTimeSlots.has(slot),
+    );
+
+    return filteredSlots;
+  }, [selectedDate, availability, occupiedTimeSlots, getValues, setValue]);
 
   // 4. Lógica de Submissão
   /**
@@ -170,9 +178,10 @@ export function useAddBookingFormController({
 
   // Desabilita os slots se: carregando, com erro, data não selecionada, ou lista de slots vazia.
   const isTimeSlotsDisabled =
-    isLoadingHours || isErrorHours || !selectedDate || timeSlots.length === 0;
-
-  console.log("slots:", timeSlots);
+    isLoadingAvailability ||
+    isErrorAvailability ||
+    !selectedDate ||
+    timeSlots.length === 0;
 
   // 8. Retorno do Hook
   return {
@@ -186,8 +195,8 @@ export function useAddBookingFormController({
     isServicesDisabled,
     // Dados de Horários
     timeSlots,
-    isLoadingHours,
-    isErrorHours,
+    isLoadingHours: isLoadingAvailability,
+    isErrorHours: isErrorAvailability,
     isTimeSlotsDisabled,
     // Funções de Manipulação
     handleCustomerSelect,

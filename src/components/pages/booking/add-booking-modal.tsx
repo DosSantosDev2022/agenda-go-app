@@ -35,7 +35,6 @@ const AddBookingsModal = () => {
           <DialogTitle>Novo Agendamento</DialogTitle>
         </DialogHeader>
 
-        {/* Adiciona o formulário aqui e passa a função de sucesso */}
         <div className="py-4">
           <AddABookingForm onSuccess={handleSuccess} />
         </div>

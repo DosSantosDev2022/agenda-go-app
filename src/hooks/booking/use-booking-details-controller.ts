@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useCallback } from "react";
 import { toast } from "sonner";
+import { useIsSlotOccupiedQuery } from "./use-is-slot-occupied-query";
 
 /**
  * @description Hook de controle para o componente BookingDetailsModal.
@@ -45,8 +46,22 @@ export function useBookingDetailsController(
 
       if (result.success) {
         toast.success(`Agendamento ${actionSuccessText} com sucesso!`);
-        // Invalida as queries para re-fetch automático
-        await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+
+        // 1. Invalida a lista principal da agenda
+        await queryClient.invalidateQueries({
+          queryKey: ["bookingsList"],
+        });
+
+        // 2. Invalida os slots disponíveis (Para liberar o horário no formulário de Add Booking)
+        await queryClient.invalidateQueries({
+          queryKey: ["existingBookings"],
+        });
+
+        // 3. Invalida a query de detalhe (opcional, mas bom)
+        await queryClient.invalidateQueries({
+          queryKey: ["booking", { id: booking.id }],
+        });
+
         onOpenChange(false); // Fecha o modal
       } else {
         toast.error(
@@ -67,6 +82,13 @@ export function useBookingDetailsController(
     updateStatus("CANCELED");
   }, [updateStatus]);
 
+  const { isOccupied: isSlotNowOccupied, isLoading: isLoadingSlotCheck } =
+    useIsSlotOccupiedQuery(
+      booking.startTime, // Data e hora de início do agendamento
+      booking.startTime, // Passando a hora de início para checar o slot
+      booking.id, // ID do agendamento atual para possivelmente ignorar
+    );
+
   // 4. Retorno do Hook
   return {
     formatTime,
@@ -74,5 +96,7 @@ export function useBookingDetailsController(
     handleConfirmBooking,
     handleCancelBooking,
     currentStatus: booking.status,
+    isSlotNowOccupied,
+    isLoadingSlotCheck,
   };
 }

@@ -13,10 +13,6 @@ import { formatDate } from "@/utils";
 import { CalendarIcon, CalendarPlus, Loader2 } from "lucide-react";
 import { CustomerCombobox } from "./customer-combobox";
 
-
-// MOCK para horários disponíveis
-const TIME_SLOTS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
-
 /**
  * @description Componente de formulário para a criação de um novo agendamento.
  * @param {object} props - Propriedades do componente.

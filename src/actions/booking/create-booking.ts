@@ -1,4 +1,3 @@
-// actions/appointments/create-appointment.ts
 "use server";
 
 import db from "@/lib/prisma";
@@ -13,8 +12,8 @@ import { ZodError } from "zod";
 
 /**
  * @description Cria um novo agendamento (booking) associado ao negócio do usuário logado.
- * * Esta Server Action realiza validação, verifica/cria o cliente e calcula
- * a hora final do agendamento antes de persistir os dados.
+ * Esta Server Action realiza validação, verifica/cria o cliente e calcula
+ * a hora final do agendamento, arredondando-a para o próximo slot disponível.
  *
  * @param {BookingViewFormValues} values - Dados do formulário de agendamento.
  * @returns {Promise<{ success: boolean; message: string }>} O resultado da operação.
@@ -26,7 +25,6 @@ export async function createBookingAction(
   const authData = await getAuthData();
 
   if (!authData) {
-    // Se não estiver autenticado ou sem businessId, encerra imediatamente.
     return {
       success: false,
       message: "Não autorizado: Sessão inválida ou negócio não configurado.",
@@ -40,7 +38,6 @@ export async function createBookingAction(
 
   if (!validationResult.success) {
     if (validationResult.error instanceof ZodError) {
-      // Retorna uma mensagem amigável em caso de erro de validação
       return {
         success: false,
         message: "Dados de agendamento inválidos. Verifique todos os campos.",
@@ -62,15 +59,11 @@ export async function createBookingAction(
   try {
     // 3. ENCONTRAR OU CRIAR CLIENTE
     let customer = await db.customer.findFirst({
-      where: {
-        name: customerName,
-        businessId: businessId, // Filtra clientes apenas deste negócio
-      },
+      where: { name: customerName, businessId: businessId },
       select: { id: true },
     });
 
     if (!customer) {
-      // Cliente não encontrado, cria um novo
       customer = await db.customer.create({
         data: {
           name: customerName,
@@ -84,25 +77,59 @@ export async function createBookingAction(
 
     const customerId = customer.id;
 
-    // 4. BUSCAR DETALHES DO SERVIÇO (duração correta)
-    const service = await db.service.findUnique({
-      where: { id: serviceId },
+    // 4. BUSCAR DETALHES DO SERVIÇO E DO NEGÓCIO (Duração do Serviço e Slot Padrão)
+    const businessData = await db.business.findUnique({
+      where: { id: businessId },
       select: {
-        durationInMinutes: true,
+        slotDurationInMinutes: true, // ✅ Busque o slotDuration
+        services: {
+          where: { id: serviceId },
+          select: { durationInMinutes: true },
+        },
       },
     });
 
-    if (!service) {
-      return { success: false, message: "Serviço selecionado não existe." };
+    if (
+      !businessData ||
+      !businessData.services[0] ||
+      !businessData.slotDurationInMinutes ||
+      businessData.slotDurationInMinutes <= 0
+    ) {
+      return {
+        success: false,
+        message: "Detalhes de serviço ou negócio inválidos.",
+      };
     }
+
+    const serviceDuration = businessData.services[0].durationInMinutes;
+    const slotDuration = businessData.slotDurationInMinutes;
 
     // 5. CALCULAR HORÁRIOS
     const [hours, minutes] = startTime.split(":").map(Number);
     const startDateTime = new Date(date);
+    // Define a hora e o minuto no objeto Date (importante para o fuso local)
     startDateTime.setHours(hours, minutes, 0, 0);
 
-    // Usa durationInMinutes para calcular o endTime
-    const endDateTime = addMinutes(startDateTime, service.durationInMinutes);
+    // 1. Tempo total em minutos desde a meia-noite até o final REAL do serviço
+    const minutesFromMidnight =
+      startDateTime.getHours() * 60 + startDateTime.getMinutes();
+    const minutesAfterService = minutesFromMidnight + serviceDuration;
+
+    // 2. Calcular o "restante" do slot (Ex: 30 minutos em um slot de 45 deixa 15 minutos)
+    const minutesToEndOfSlot = minutesAfterService % slotDuration;
+    let minutesToAdd = 0;
+
+    // 3. Se houver um resto, significa que o serviço parou no meio de um slot.
+    //    Adicionamos o tempo restante para forçar o endTime a ser o próximo múltiplo.
+    if (minutesToEndOfSlot > 0) {
+      minutesToAdd = slotDuration - minutesToEndOfSlot;
+    }
+
+    // 4. Define o endTime: Duração Real + Arredondamento
+    const endDateTime = addMinutes(
+      startDateTime,
+      serviceDuration + minutesToAdd,
+    );
 
     // 6. PERSISTÊNCIA (Criação do Booking)
     await db.booking.create({
@@ -110,9 +137,10 @@ export async function createBookingAction(
         startTime: startDateTime,
         endTime: endDateTime,
         notes: notes || null,
+        status: "PENDING",
 
         // Relacionamentos
-        businessId: businessId, // Usando o ID obtido do utilitário
+        businessId: businessId,
         serviceId: serviceId,
         customerId: customerId,
       },
@@ -129,7 +157,6 @@ export async function createBookingAction(
     };
   } catch (error) {
     console.error("Erro no servidor ao criar agendamento:", error);
-    // Erro genérico para o usuário final.
     return {
       success: false,
       message: "Falha interna no servidor ao criar o agendamento.",
