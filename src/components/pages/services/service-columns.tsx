@@ -1,7 +1,7 @@
 // components/services/service-columns.tsx
 
 import { ServiceListItem } from "@/actions/services/get-services";
-import { formatPrice } from "@/utils/format-price"; // Assumindo uma função utilitária para formatação
+import { formatPrice } from "@/utils/format-price";
 import { ColumnDef } from "@tanstack/react-table";
 import { ServiceActions } from "./service-actions";
 
@@ -37,3 +37,4 @@ const serviceColumns: ColumnDef<ServiceListItem>[] = [
 ];
 
 export { serviceColumns };
+

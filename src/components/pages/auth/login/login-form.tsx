@@ -1,20 +1,15 @@
 'use client';
 
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/components/ui';
+import { LoginSchema } from '@/types/schema/zod-schema-auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { LoginSchema } from '@/types/schema/zod-schema-auth';
-import { signIn } from 'next-auth/react';
-// 1. CORREÇÃO DO ROUTER: Para o App Router, use 'next/navigation'
-import { useRouter } from 'next/navigation';
-
-// Importe seus componentes
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import Link from 'next/link';
 import { toast } from 'sonner';
+import * as z from 'zod';
 
 // Define o tipo dos dados do formulário a partir do Zod Schema
 type LoginFormInputs = z.infer<typeof LoginSchema>;

@@ -1,7 +1,7 @@
 // components/dashboard/stats-cards.tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { formatPrice } from "@/utils";
 import { CalendarCheck, DollarSign, Users } from "lucide-react";
 
@@ -66,3 +66,4 @@ const StatsCards = ({
 }
 
 export { StatsCards };
+

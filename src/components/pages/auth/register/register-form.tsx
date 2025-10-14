@@ -1,17 +1,14 @@
 'use client';
 
+import { registerAction } from '@/actions/auth/register-action';
+import { RegisterSchema } from '@/types/schema/zod-schema-auth';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { RegisterSchema } from '@/types/schema/zod-schema-auth';
-import { registerAction } from '@/actions/auth/register-action';
 
 // Importe seus componentes do Shadcn/UI
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/components/ui';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -78,7 +75,7 @@ export function RegisterForm() {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
@@ -104,7 +101,7 @@ export function RegisterForm() {
                 </FormItem>
               )}
             />
-            
+
             {/* TODO: Adicionar mensagens de Erro e Sucesso globais */}
 
             <Button type="submit" className="w-full" disabled={isPending}>
@@ -117,10 +114,10 @@ export function RegisterForm() {
         {/* TODO: Divisor "OU" */}
         {/* TODO: Botão de Login com Google */}
         <p className="text-sm text-center">
-            Já tem uma conta?{' '}
-            <Link href="/auth/login" className="underline">
-                Faça o login
-            </Link>
+          Já tem uma conta?{' '}
+          <Link href="/auth/login" className="underline">
+            Faça o login
+          </Link>
         </p>
       </CardFooter>
     </Card>

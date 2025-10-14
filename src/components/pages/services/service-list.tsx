@@ -2,9 +2,7 @@
 "use client";
 
 import { serviceColumns } from "@/components/pages/services/service-columns";
-import { DataTable } from "@/components/ui";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle, DataTable, Skeleton } from "@/components/ui";
 import { useServicesQuery } from "@/hooks/services/use-services-query";
 import { AlertCircle } from "lucide-react";
 
@@ -59,3 +57,4 @@ const ServiceList = () => {
 }
 
 export { ServiceList };
+

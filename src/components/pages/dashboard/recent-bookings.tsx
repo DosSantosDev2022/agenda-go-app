@@ -2,15 +2,15 @@
 "use client";
 
 import { BookingWithServiceAndCustomer } from "@/actions/dashboard/dashboard-data";
-import { Badge } from "@/components/ui/badge";
 import {
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -69,3 +69,4 @@ const RecentBookings = ({ recentBookings }: RecentBookingsProps) => {
 }
 
 export { RecentBookings };
+

@@ -1,7 +1,7 @@
 // components/customers/customer-search-input.tsx
 "use client";
 
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -55,3 +55,4 @@ const CustomerSearchInput = ({ onSearchChange, isSearching }: CustomerSearchInpu
 }
 
 export { CustomerSearchInput };
+

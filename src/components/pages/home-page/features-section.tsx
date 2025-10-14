@@ -1,5 +1,5 @@
 // components/landing/features-section.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { FeatureCard } from "@/config/landing-page-data";
 
 interface FeaturesSectionProps {
@@ -40,3 +40,4 @@ const FeaturesSection = ({ data }: FeaturesSectionProps) => {
 }
 
 export { FeaturesSection };
+

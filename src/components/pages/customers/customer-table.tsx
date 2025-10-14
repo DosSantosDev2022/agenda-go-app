@@ -1,8 +1,7 @@
 // components/customers/customer-table.tsx
 "use client";
 
-import { DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
-import { Button } from "@/components/ui/button";
+import { Button, DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
 import { useCustomerTableController } from "@/hooks/customer";
 import { Loader2 } from "lucide-react";
 import { customerColumns } from "./customer-columns";
@@ -96,3 +95,4 @@ const CustomerTable = () => {
 }
 
 export { CustomerTable };
+

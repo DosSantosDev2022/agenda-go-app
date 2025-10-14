@@ -1,17 +1,13 @@
 // components/services/edit-service-form.tsx
 "use client";
 
+import { ServiceListItem } from "@/actions";
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@/components/ui";
 import { useUpdateService } from "@/hooks/services";
 import { ServiceFormValues, ServiceSchema } from "@/types/schema/zod-service-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-// Componentes Shadcn/UI
-import { ServiceListItem } from "@/actions";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Loader2, Save } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 /**
  * @description Props para o formulário de edição de serviço.
@@ -131,3 +127,4 @@ const EditServiceForm = ({ service, onSuccess }: EditServiceFormProps) => {
 }
 
 export { EditServiceForm };
+

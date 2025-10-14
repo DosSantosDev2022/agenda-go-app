@@ -26,7 +26,7 @@ const poppins = Poppins({
  * @param {React.ReactNode} props.children - Os elementos filhos a serem renderizados dentro dos provedores.
  * @returns {JSX.Element} O componente <body> com todos os provedores e filhos aninhados.
  */
-export function Providers({ children }: { children: React.ReactNode }) {
+const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <body
       className={`${poppins.className} antialiased h-full m-0 p-0 overflow-hidden`}
@@ -47,3 +47,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
     </body>
   );
 }
+
+export { Providers };

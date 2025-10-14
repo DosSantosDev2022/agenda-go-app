@@ -1,8 +1,7 @@
 // components/landing/pricing-section.tsx
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui";
 import { PricingPlan } from "@/config/landing-page-data";
-import { cn } from "@/lib/utils"; // Assumindo que você tem uma função utilitária para classes
+import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 interface PricingSectionProps {
@@ -70,3 +69,4 @@ const PricingSection = ({ data }: PricingSectionProps) => {
 }
 
 export { PricingSection };
+

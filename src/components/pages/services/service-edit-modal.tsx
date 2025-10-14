@@ -2,7 +2,7 @@
 "use client";
 
 import { ServiceListItem } from "@/actions";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui";
 import { EditServiceForm } from "./service-edit-form";
 
 interface ServiceDetailsModalProps {
@@ -33,3 +33,4 @@ const ServiceEditModal = ({ isOpen, onOpenChange, service }: ServiceDetailsModal
 }
 
 export { ServiceEditModal };
+

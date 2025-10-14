@@ -1,7 +1,7 @@
 // components/agenda/custom-agenda-view.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { useBookingViewController } from "@/hooks/booking";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AddBookingsModal } from "./add-booking-modal";
@@ -93,3 +93,4 @@ const BookingView = () => {
 }
 
 export { BookingView };
+

@@ -9,6 +9,7 @@ export * from "./dashboard/dashboard-data";
 export * from "./onboarding/onboarding-action";
 // Server actions services
 export * from "./services/add-services";
+export * from "./services/delete-service";
 export * from "./services/get-services";
 export * from "./services/update-services";
 //  Server actions customers

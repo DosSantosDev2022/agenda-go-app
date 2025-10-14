@@ -2,8 +2,7 @@
 "use client";
 
 import { CustomerSearchResult } from "@/actions";
-import { Command, CommandEmpty, CommandGroup, CommandItem, Input } from "@/components/ui";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandItem, Input, Popover, PopoverContent, PopoverTrigger } from "@/components/ui";
 import { useCustomerComboboxController } from "@/hooks/booking";
 import { Loader2, User } from "lucide-react";
 import { ControllerRenderProps } from "react-hook-form";
@@ -100,3 +99,4 @@ const CustomerCombobox = ({
 }
 
 export { CustomerCombobox };
+

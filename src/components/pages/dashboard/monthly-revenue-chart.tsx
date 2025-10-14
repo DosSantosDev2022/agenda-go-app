@@ -2,7 +2,7 @@
 "use client";
 
 import { MonthlyRevenueData } from "@/actions/dashboard/dashboard-data";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { formatPrice } from "@/utils";
 import { Bar, BarChart, LabelList, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
@@ -83,3 +83,4 @@ const MonthlyRevenueChart = ({ data }: MonthlyRevenueChartProps) => {
 }
 
 export { MonthlyRevenueChart };
+

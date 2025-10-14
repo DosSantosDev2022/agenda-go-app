@@ -1,9 +1,8 @@
 // components/services/new-service-button.tsx
 "use client";
 
-import { AddServiceForm } from "@/components/pages/services/add-service-form";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AddServiceForm } from "@/components/pages/services";
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 

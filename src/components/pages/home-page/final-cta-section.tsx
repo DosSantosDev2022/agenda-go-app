@@ -1,5 +1,5 @@
 // components/landing/final-cta-section.tsx
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 
 interface FinalCtaSectionProps {
   data: typeof import("@/config/landing-page-data").landingPageData.finalCta;
@@ -28,3 +28,4 @@ const FinalCtaSection = ({ data }: FinalCtaSectionProps) => {
 }
 
 export { FinalCtaSection };
+

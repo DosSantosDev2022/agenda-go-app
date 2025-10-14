@@ -1,10 +1,7 @@
 // components/agenda/booking-details-modal.tsx
 "use client";
 import { BookingAgenda } from "@/actions/booking/get-booking";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Separator } from "@/components/ui";
 import { useBookingDetailsController } from "@/hooks/booking";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { Calendar, CircleCheck, Delete, Tag, TextAlignCenter, User } from "lucide-react";
@@ -143,3 +140,4 @@ const BookingDetailsModal = ({ isOpen, onOpenChange, booking }: BookingDetailsMo
 }
 
 export { BookingDetailsModal };
+

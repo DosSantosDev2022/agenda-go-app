@@ -1,5 +1,5 @@
 // components/landing/hero-section.tsx
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

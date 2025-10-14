@@ -1,12 +1,6 @@
 // components/agenda/add-appointment-form.tsx
 "use client";
-import { Input } from "@/components/ui";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Button, Calendar, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Popover, PopoverContent, PopoverTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from "@/components/ui";
 import { useAddBookingFormController } from "@/hooks/booking";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils";
@@ -242,3 +236,4 @@ const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
 }
 
 export { AddABookingForm };
+

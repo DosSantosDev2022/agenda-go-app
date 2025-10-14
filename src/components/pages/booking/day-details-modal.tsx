@@ -2,8 +2,7 @@
 "use client";
 
 import { BookingAgenda } from "@/actions/booking/get-booking";
-import { Badge, ScrollArea } from "@/components/ui";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge, Dialog, DialogContent, DialogHeader, DialogTitle, ScrollArea } from "@/components/ui";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -63,3 +62,4 @@ const DayDetailsModal = ({ isOpen, onOpenChange, date, bookings, onBookingClick 
 }
 
 export { DayDetailsModal };
+
