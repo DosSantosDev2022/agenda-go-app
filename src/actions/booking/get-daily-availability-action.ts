@@ -3,10 +3,12 @@
 import db from "@/lib/prisma";
 import { DailyAvailability } from "@/types/booking-types"; // Assumindo o caminho do tipo
 import { getAuthData } from "@/utils/get-auth-data";
+import { StatusBooking } from "@prisma/client";
 import { addDays, startOfDay } from "date-fns";
 
 interface GetAvailabilityParams {
   date: Date;
+  currentBookingId?: string;
 }
 
 /**
@@ -19,6 +21,7 @@ interface GetAvailabilityParams {
  */
 export async function getDailyAvailabilityAction({
   date,
+  currentBookingId,
 }: GetAvailabilityParams): Promise<DailyAvailability | null> {
   const authData = await getAuthData();
 
@@ -68,18 +71,30 @@ export async function getDailyAvailabilityAction({
     const dayStart = startOfDay(date);
     const dayEnd = addDays(dayStart, 1);
 
-    const existingBookings = await db.booking.findMany({
-      where: {
-        businessId,
-        startTime: {
-          gte: dayStart, // Começo do dia
-          lt: dayEnd, // Menor que o começo do próximo dia
-        },
-        status: {
-          in: ["CONFIRMED", "PENDING"], // Filtra apenas status que ocupam tempo
-        },
+    const whereConditions = {
+      businessId,
+      startTime: {
+        gte: dayStart,
+        lte: dayEnd, // Busca até o final do dia
       },
+      status: {
+        in: [StatusBooking.CONFIRMED, StatusBooking.PENDING],
+      },
+    };
+
+    const finalWhere = currentBookingId
+      ? {
+          ...whereConditions,
+          NOT: {
+            id: currentBookingId, // Exclui o agendamento atual
+          },
+        }
+      : whereConditions;
+
+    const existingBookings = await db.booking.findMany({
+      where: finalWhere, // Aplicando a condição final
       select: {
+        id: true, // Incluímos o ID para debug, embora não seja usado no cálculo do slot
         startTime: true,
         service: { select: { durationInMinutes: true } },
       },

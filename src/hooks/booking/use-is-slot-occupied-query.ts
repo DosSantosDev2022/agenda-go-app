@@ -20,7 +20,7 @@ interface SlotCheckResult {
 export function useIsSlotOccupiedQuery(
   date: Date | undefined,
   startTime: Date | undefined,
-  currentBookingId: string,
+  currentBookingId: string | undefined,
 ): SlotCheckResult {
   // Converte a hora de início para o formato "HH:MM" para a checagem
   const timeKey = startTime ? format(startTime, "HH:mm") : "";
@@ -30,12 +30,15 @@ export function useIsSlotOccupiedQuery(
   const isEnabled = !!date && !!startTime && !!timeKey;
 
   const { data: availability, isLoading } = useQuery({
-    queryKey: ["slotCheck", dateKey, timeKey],
+    queryKey: ["slotCheck", dateKey, timeKey, currentBookingId],
     queryFn: async () => {
       if (!date) return null;
 
       // Reutilizamos a Server Action unificada de disponibilidade.
-      const result = await getDailyAvailabilityAction({ date });
+      const result = await getDailyAvailabilityAction({
+        date,
+        currentBookingId,
+      });
 
       if (!result) return null;
 
