@@ -3,7 +3,9 @@
 
 import { Button, DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
 import { useCustomerTableController } from "@/hooks/customer";
+import { useCustomerActions } from "@/hooks/customer/use-customer-actions";
 import { Loader2 } from "lucide-react";
+import { CustomerActionModal } from "./customer-action-modal";
 import { customerColumns } from "./customer-columns";
 import { CustomerSearchInput } from "./customer-search-input";
 
@@ -26,6 +28,13 @@ const CustomerTable = () => {
     isLoading
   } = useCustomerTableController();
 
+  const {
+    isModalOpen,
+    selectedCustomer,
+    handleOpenActionsModal, // Usaremos esta função
+    handleCloseActionsModal,
+  } = useCustomerActions();
+
   if (isLoadingInitial) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -43,6 +52,11 @@ const CustomerTable = () => {
     );
   }
 
+  // Passamos a função de callback para o factory de colunas
+  const columns = customerColumns({
+    onNotifyClick: handleOpenActionsModal,
+  });
+
   return (
     <div className="space-y-4">
       {/* 3. CAMPO DE BUSCA */}
@@ -52,7 +66,7 @@ const CustomerTable = () => {
       />
       {/* Tabela de Dados */}
       <div className="max-h-[60vh] overflow-y-auto scrollbar-custom border rounded-lg">
-        <DataTable columns={customerColumns} data={allCustomers} />
+        <DataTable columns={columns} data={allCustomers} />
       </div>
 
       {/* FOOTER DE SCROLL INFINITO (Mantido) */}
@@ -89,6 +103,12 @@ const CustomerTable = () => {
             : "Nenhum cliente cadastrado."}
         </p>
       )}
+
+      <CustomerActionModal
+        isOpen={isModalOpen}
+        onClose={handleCloseActionsModal}
+        customer={selectedCustomer}
+      />
 
     </div>
   );

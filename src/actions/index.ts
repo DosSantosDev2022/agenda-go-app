@@ -13,4 +13,6 @@ export * from "./services/delete-service";
 export * from "./services/get-services";
 export * from "./services/update-services";
 //  Server actions customers
+export * from "./customer/get-customers-list";
 export * from "./customer/search-customer-by-name";
+export * from "./customer/send-discount-action";

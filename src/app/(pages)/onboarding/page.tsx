@@ -9,12 +9,12 @@ export default async function OnboardingPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/auth/login"); // Redirecionamento extra de segurança
+    redirect("/auth/login");
   }
 
   const user = await db.user.findUnique({
     where: { id: session.user.id },
-    select: { business: { select: { id: true } } }, // Busque apenas o necessário
+    select: { business: { select: { id: true } } },
   });
 
   const userHasBusiness = !!user?.business?.id;

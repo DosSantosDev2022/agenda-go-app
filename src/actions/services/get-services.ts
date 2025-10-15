@@ -10,7 +10,6 @@ import { getAuthData } from "@/utils/get-auth-data";
  * * @returns {Promise<ServiceListItem[]>} Uma lista de serviços do negócio, ou um array vazio se não for autorizado.
  */
 export async function getServicesAction(): Promise<ServiceListItem[]> {
-  
   // 1. AUTENTICAÇÃO E AUTORIZAÇÃO (Obter businessId)
   const authData = await getAuthData();
 
@@ -34,11 +33,10 @@ export async function getServicesAction(): Promise<ServiceListItem[]> {
       orderBy: { name: "asc" },
     });
 
-    // O retorno do Prisma já é compatível com a interface, mas faremos o cast 
+    // O retorno do Prisma já é compatível com a interface, mas faremos o cast
     // ou o mapeamento para garantir que o tipo `ServiceListItem` é respeitado.
     // Neste caso, o Prisma `select` deve garantir a estrutura correta.
     return services as ServiceListItem[];
-
   } catch (error) {
     console.error("Erro ao buscar serviços:", error);
     // Em caso de erro interno, retorna um array vazio.
@@ -46,7 +44,7 @@ export async function getServicesAction(): Promise<ServiceListItem[]> {
   }
 }
 
-// 💡 Definição de Tipagem (Interface) para os serviços
+//  Definição de Tipagem (Interface) para os serviços
 export interface ServiceListItem {
   id: string;
   name: string;

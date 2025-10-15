@@ -51,7 +51,28 @@ export async function addServiceAction(
   const { businessId } = authData;
 
   try {
-    // 3. Persistência (Criação do Serviço)
+    // Busca um serviço com o mesmo nome e o mesmo businessId
+
+    const existingService = await db.service.findFirst({
+      where: {
+        name: {
+          equals: name,
+        },
+        businessId: businessId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingService) {
+      return {
+        success: false,
+        message: `O serviço '${name}' já existe.`,
+      };
+    }
+
+    // Persistência (Criação do Serviço)
     await db.service.create({
       data: {
         name,
@@ -61,7 +82,7 @@ export async function addServiceAction(
       },
     });
 
-    // 4. Invalidação de Cache
+    //  Invalidação de Cache
     revalidatePath("/services");
     revalidatePath("/dashboard");
 
