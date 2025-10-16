@@ -1,7 +1,7 @@
 // hooks/agenda/use-add-booking-form-controller.ts
 
 import { CustomerSearchResult } from "@/actions";
-import { useCreateBooking } from "@/hooks/booking/use-create-booking";
+import { useCreateBooking, useDailyAvailabilityQuery } from "@/hooks/booking";
 import { useServicesQuery } from "@/hooks/services";
 import {
   BookingViewFormValues,
@@ -11,7 +11,6 @@ import { generateTimeSlots } from "@/utils/time-slots-generator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useDailyAvailabilityQuery } from "./use-daily-availability-query";
 
 /**
  * @description Hook de controle para o componente AddABookingForm.

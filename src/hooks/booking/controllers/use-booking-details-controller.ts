@@ -2,11 +2,11 @@
 
 import { BookingAgenda } from "@/actions/booking/get-booking";
 import { updateBookingStatus } from "@/actions/booking/update-status-booking-action";
+import { useIsSlotOccupiedQuery } from "@/hooks/booking";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { useIsSlotOccupiedQuery } from "./use-is-slot-occupied-query";
 
 /**
  * @description Hook de controle para o componente BookingDetailsModal.

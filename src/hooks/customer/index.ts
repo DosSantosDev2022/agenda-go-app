@@ -1,3 +1,3 @@
-export * from "./use-customer-table-controller";
-export * from "./use-infinite-customers-query";
-export * from "./use-search-customers-query";
+export * from "./controllers/use-customer-table-controller";
+export * from "./queries/use-infinite-customers-query";
+export * from "./queries/use-search-customers-query";

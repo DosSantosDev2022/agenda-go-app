@@ -1,9 +1,12 @@
-export * from "./use-add-booking-form-controller";
-export * from "./use-booking";
-export * from "./use-booking-details-controller";
-export * from "./use-booking-view-controller";
-export * from "./use-create-booking";
-export * from "./use-customer-combobox-controller";
-export * from "./use-daily-availability-query";
-export * from "./use-existing-bookings-query";
-export * from "./use-is-slot-occupied-query";
+// exporta os hooks do tipo controller
+export * from "./controllers/use-add-booking-form-controller";
+export * from "./controllers/use-booking-details-controller";
+export * from "./controllers/use-booking-view-controller";
+export * from "./controllers/use-customer-combobox-controller";
+// exporta os hooks do tipo mutation
+export * from "./mutations/use-create-booking";
+// exporta os hooks do tipo query
+export * from "./queries/use-booking";
+export * from "./queries/use-daily-availability-query";
+export * from "./queries/use-existing-bookings-query";
+export * from "./queries/use-is-slot-occupied-query";

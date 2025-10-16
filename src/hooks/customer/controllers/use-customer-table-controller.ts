@@ -1,6 +1,6 @@
 // hooks/customers/use-customer-table-controller.ts
 
-import { useInfiniteCustomersQuery } from "@/hooks/customer/use-infinite-customers-query";
+import { useInfiniteCustomersQuery } from "@/hooks/customer";
 import { CustomerListItem } from "@/types/customers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
