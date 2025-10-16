@@ -28,10 +28,12 @@ const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
     handleCustomerSelect,
     handleCustomerNameChange,
     customerEmail,
-    timeSlots
+    timeSlots,
+    isTimeSlotsDisabled,
+    isDayClosed
   } = useAddBookingFormController({ onSuccess });
 
-
+  console.log("timeSlots:", timeSlots)
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-6">
@@ -132,7 +134,7 @@ const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
         />
 
         {/* 3. DATA E HORA */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 justify-center items-end">
 
           {/* CAMPO DE DATA */}
           <FormField
@@ -153,7 +155,7 @@ const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
                         disabled={isPending}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? formatDate(field.value, "PPP") : <span>Selecione a data</span>}
+                        {field.value ? formatDate(field.value) : <span>Selecione a data</span>}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
@@ -173,31 +175,39 @@ const AddABookingForm = ({ onSuccess }: AddBookingViewFormProps) => {
             )}
           />
 
+          {isDayClosed ? (
+            <div className="flex items-center justify-center h-8 text-sm text-center text-yellow-600 bg-yellow-50 rounded-md border border-yellow-200">
+              Fechado neste dia.
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="startTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hora</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione a hora" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {timeSlots.map(time => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           {/* CAMPO DE HORA */}
-          <FormField
-            control={form.control}
-            name="startTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Hora</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Selecione a hora" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {timeSlots.map(time => (
-                      <SelectItem key={time} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
         </div>
 
         {/* 4. OBSERVAÇÕES */}

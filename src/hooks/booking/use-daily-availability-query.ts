@@ -1,6 +1,7 @@
 import { getDailyAvailabilityAction } from "@/actions/booking/get-daily-availability-action"; // Ação acima
 import { DailyAvailability } from "@/types/booking-types"; // Tipo DailyAvailability
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { format } from "date-fns";
 
 const QUERY_KEY = ["dailyAvailability"];
 
@@ -14,9 +15,7 @@ export function useDailyAvailabilityQuery(
   selectedDate: Date | undefined,
 ): UseQueryResult<DailyAvailability, Error> {
   // A chave da query DEVE mudar quando a data muda para forçar o re-fetch
-  const dateKey = selectedDate
-    ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
-    : "";
+  const dateKey = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
 
   return useQuery<DailyAvailability, Error>({
     queryKey: [QUERY_KEY, dateKey], // A chave muda com o dia
@@ -28,9 +27,12 @@ export function useDailyAvailabilityQuery(
       return getDailyAvailabilityAction({ date: selectedDate }).then(
         (result) => {
           if (!result) {
-            throw new Error(
-              "Não foi possível buscar a disponibilidade diária.",
-            );
+            return {
+              startTime: null,
+              endTime: null,
+              slotDurationInMinutes: 0,
+              occupiedSlots: [],
+            };
           }
           return result;
         },
@@ -39,15 +41,6 @@ export function useDailyAvailabilityQuery(
 
     // A query só deve ser ativada se uma data válida estiver selecionada
     enabled: !!selectedDate,
-
-    // O `initialData` garante que o useMemo não trave no frontend
-    initialData: {
-      startTime: null,
-      endTime: null,
-      slotDurationInMinutes: 0,
-      occupiedSlots: [],
-    },
-
     staleTime: 1000 * 60, // 1 minuto de cache (para refletir mudanças rápidas)
   });
 }

@@ -87,9 +87,9 @@ export function useAddBookingFormController({
       slotDurationInMinutes <= 0
     ) {
       // Limpa o startTime se o dia for inválido
-      if (getValues("startTime") !== "") {
+      /* if (getValues("startTime") !== "") {
         setValue("startTime", "", { shouldValidate: true });
-      }
+      } */
       return [];
     }
 
@@ -106,7 +106,7 @@ export function useAddBookingFormController({
     );
 
     return filteredSlots;
-  }, [selectedDate, availability, occupiedTimeSlots, getValues, setValue]);
+  }, [selectedDate, availability, occupiedTimeSlots]);
 
   // 4. Lógica de Submissão
   /**
@@ -183,6 +183,23 @@ export function useAddBookingFormController({
     !selectedDate ||
     timeSlots.length === 0;
 
+  /**
+   * @description Verifica se o dia foi retornado como "Fechado" pela Server Action.
+   * Isso ocorre se availability.startTime e availability.endTime forem nulos,
+   * mas a query rodou sem erros.
+   */
+  const isDayClosed = useMemo(() => {
+    // Apenas verifica se há dados e se os horários de funcionamento são nulos.
+    // slotDurationInMinutes > 0 garante que a configuração básica existe.
+    return (
+      !!availability &&
+      availability.slotDurationInMinutes > 0 &&
+      !availability.startTime &&
+      !availability.endTime &&
+      timeSlots.length === 0
+    );
+  }, [availability, timeSlots.length]);
+
   // 8. Retorno do Hook
   return {
     form,
@@ -203,5 +220,7 @@ export function useAddBookingFormController({
     handleCustomerNameChange,
     customerEmail: watch("customerEmail"),
     customerNameField: form.control,
+
+    isDayClosed,
   };
 }
