@@ -3,7 +3,7 @@
 
 import { Button, DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
 import { useCustomerTableController } from "@/hooks/customer";
-import { useCustomerActions } from "@/hooks/customer/use-customer-actions";
+import { useCustomerActions } from "@/hooks/customer/";
 import { Loader2 } from "lucide-react";
 import { CustomerActionModal } from "./customer-action-modal";
 import { customerColumns } from "./customer-columns";

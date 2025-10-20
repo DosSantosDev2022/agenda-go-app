@@ -3,7 +3,7 @@
 
 import { serviceColumns } from "@/components/pages/services/service-columns";
 import { Alert, AlertDescription, AlertTitle, DataTable, Skeleton } from "@/components/ui";
-import { useServicesQuery } from "@/hooks/services/use-services-query";
+import { useServicesQuery } from "@/hooks/services/";
 import { AlertCircle } from "lucide-react";
 
 /**

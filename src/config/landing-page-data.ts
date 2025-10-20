@@ -94,7 +94,7 @@ export const landingPageData = {
     subheading: "Comece com o plano gratuito e evolua junto com o seu negócio.",
     plans: [
       {
-        name: "Básico (Grátis)",
+        name: "Teste (1 mês Grátis)",
         price: "R$ 0",
         billingCycle: "/mês",
         features: [
@@ -102,34 +102,33 @@ export const landingPageData = {
           "Agendamentos ilimitados",
           "Cadastro de 10 serviços",
           "Suporte por e-mail (24h)",
-          "50 confirmações automáticas",
         ],
         isHighlighted: false,
       },
       {
         name: "Profissional",
-        price: "R$ 49,90",
+        price: "R$ 29,90",
         billingCycle: "/mês",
         features: [
           "2 Usuários (colaboradores)",
-          "Todos os recursos do Básico",
+          "Agendamentos ilimitados",
           "Cadastro ilimitado de serviços",
-          "Confirmações automáticas ilimitadas",
-          "Relatórios e estatísticas avançadas",
-          "Suporte via WhatsApp (prioritário)",
+          "Gestão de insumos para seu negócio",
+          "Gestão financeira completa",
+          "Relatórios e estatísticas",
         ],
         isHighlighted: true,
       },
       {
         name: "Empresarial",
-        price: "R$ 99,90",
+        price: "R$ 79,90",
         billingCycle: "/mês",
         features: [
           "5 Usuários (colaboradores)",
           "Todos os recursos do Profissional",
-          "Gestão de múltiplos locais",
-          "Integração com calendários externos",
-          "API de integração customizada",
+          "Confirmações de agendamentos automáticas",
+          "Integração com Google calendar",
+          "Suporte via WhatsApp",
         ],
         isHighlighted: false,
       },
@@ -143,7 +142,7 @@ export const landingPageData = {
       {
         question: "O Agenda GO oferece teste grátis?",
         answer:
-          "Sim! Você pode começar com nosso Plano Básico totalmente gratuito por 14 dias, já com diversas funcionalidades liberadas para testar.",
+          "Sim! Você pode começar com nosso Plano Básico totalmente gratuito por 30 dias, já com diversas funcionalidades liberadas para testar.",
       },
       {
         question: "Preciso de cartão de crédito para começar o teste?",
