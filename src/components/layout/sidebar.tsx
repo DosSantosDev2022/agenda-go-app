@@ -1,6 +1,6 @@
 "use client"
 import { DashboardNav } from '@/components/layout/dashboard-nav';
-import { BaggageClaim, Calendar, Home, User } from 'lucide-react';
+import { BaggageClaim, Calendar, Home, Package, User } from 'lucide-react';
 import Link from 'next/link';
 
 // Defina os itens de navegação em um só lugar
@@ -19,6 +19,11 @@ const navItems = [
     label: 'Serviços',
     href: '/services',
     icon: BaggageClaim,
+  },
+  {
+    label: 'Insumos',
+    href: '/inputs',
+    icon: Package,
   },
   {
     label: 'Clientes',

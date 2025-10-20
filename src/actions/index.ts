@@ -16,3 +16,6 @@ export * from "./services/update-services";
 export * from "./customer/get-customers-list";
 export * from "./customer/search-customer-by-name";
 export * from "./customer/send-discount-action";
+
+export * from './inputs/create-inputs-action'
+export * from './inputs/get-inputs-list-action'
