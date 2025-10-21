@@ -1,5 +1,5 @@
 // hooks/mutations/use-update-service.ts
-import { updateServiceAction } from "@/actions";
+import { updateServiceAction } from "@/actions/services";
 import { ServiceFormValues } from "@/types/schema/zod-service-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

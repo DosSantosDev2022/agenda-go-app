@@ -3,7 +3,7 @@
 
 import { db } from "@/lib/prisma";
 import { getAuthData } from "@/utils/get-auth-data";
-import { Booking, Customer, Service, StatusBooking } from "@prisma/client";
+import { Booking, Customer, Service } from "@prisma/client";
 import { endOfDay, parseISO, startOfDay } from "date-fns";
 
 /**
@@ -17,7 +17,7 @@ import { endOfDay, parseISO, startOfDay } from "date-fns";
  */
 export type BookingAgenda = Pick<
   Booking,
-  "id" | "startTime" | "endTime" | "status" | "notes"
+  "id" | "startTime" | "endTime" | "status"
 > & {
   serviceName: Service["name"];
   customerName: Customer["name"];
@@ -77,7 +77,6 @@ export async function getBookings(
       status: true,
       service: { select: { name: true } },
       customer: { select: { name: true } },
-      notes: true,
     },
     orderBy: {
       startTime: "asc",
@@ -92,6 +91,5 @@ export async function getBookings(
     status: app.status,
     serviceName: app.service.name,
     customerName: app.customer.name,
-    notes: app.notes,
   }));
 }

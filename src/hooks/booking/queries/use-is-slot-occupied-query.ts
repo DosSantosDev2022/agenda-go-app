@@ -1,6 +1,6 @@
 // hooks/booking/use-is-slot-occupied-query.ts (Novo Hook)
 
-import { getDailyAvailabilityAction } from "@/actions/booking/get-daily-availability-action";
+import { getDailyAvailabilityAction } from "@/actions/booking";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useMemo } from "react";

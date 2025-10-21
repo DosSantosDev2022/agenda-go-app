@@ -1,4 +1,4 @@
-import { createInputAction } from "@/actions";
+import { createInputAction } from "@/actions/inputs";
 import { InputFormValues } from "@/types/schema/zod-input-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

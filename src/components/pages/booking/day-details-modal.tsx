@@ -1,7 +1,7 @@
 // components/agenda/day-details-modal.tsx (Esboço ShadcnUI)
 "use client";
 
-import { BookingAgenda } from "@/actions/booking/get-booking";
+import { BookingAgenda } from "@/actions/booking/get-booking-action";
 import { Badge, Dialog, DialogContent, DialogHeader, DialogTitle, ScrollArea } from "@/components/ui";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";
 import { format } from "date-fns";

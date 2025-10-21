@@ -1,5 +1,5 @@
 // hooks/customer/use-search-customers-query.ts
-import { CustomerSearchResult, searchCustomerByNameAction } from "@/actions";
+import { CustomerSearchResult, searchCustomerByNameAction } from "@/actions/customer";
 import { useQuery } from "@tanstack/react-query";
 
 /**

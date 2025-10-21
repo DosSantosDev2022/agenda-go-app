@@ -1,5 +1,5 @@
 // hooks/booking/use-existing-bookings-query.ts
-import { getExistingBookingsAction } from "@/actions/booking/get-existing-bookings-action";
+import { getExistingBookingsAction } from "@/actions/booking";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 // Define a chave de consulta, usando a data para invalidar e refetch

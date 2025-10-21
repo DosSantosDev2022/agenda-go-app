@@ -1,6 +1,6 @@
 // hooks/agenda/use-customer-combobox-controller.ts
 
-import { CustomerSearchResult } from "@/actions";
+import { CustomerSearchResult } from "@/actions/customer";
 import { useSearchCustomersQuery } from "@/hooks/customer";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useCallback, useMemo, useState } from "react";

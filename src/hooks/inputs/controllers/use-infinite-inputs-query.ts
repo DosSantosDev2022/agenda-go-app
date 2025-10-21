@@ -1,5 +1,5 @@
 // hooks/customer/use-infinite-customers-query.ts
-import { getInputsList } from "@/actions";
+import { getInputsList } from "@/actions/inputs";
 import { InputsPageData } from "@/types/inputs";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 

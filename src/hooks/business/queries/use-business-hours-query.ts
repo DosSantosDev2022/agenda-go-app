@@ -3,7 +3,7 @@
 import {
   BusinessHours,
   getBusinessHours,
-} from "@/actions/business/get-business-hours";
+} from "@/actions/business";
 import { useQuery } from "@tanstack/react-query";
 
 const QUERY_KEY = ["business", "hours"];

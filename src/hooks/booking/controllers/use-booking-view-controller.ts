@@ -1,6 +1,6 @@
 // hooks/agenda/use-booking-view-controller.ts
 
-import { BookingAgenda } from "@/actions/booking/get-booking";
+import { BookingAgenda } from "@/actions/booking";
 import { useAppointmentsBookings } from "@/hooks/booking";
 import {
   DayData,

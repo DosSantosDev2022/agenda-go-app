@@ -1,6 +1,6 @@
 // hooks/inputs/mutations/use-update-input.ts
 
-import { updateInputAction } from "@/actions/inputs/update-input-action";
+import { updateInputAction } from "@/actions/inputs";
 import { UpdateInputFormValues } from "@/types/schema/zod-input-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

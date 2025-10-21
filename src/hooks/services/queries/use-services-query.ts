@@ -2,7 +2,7 @@
 import {
   getServicesAction,
   ServiceListItem,
-} from "@/actions/services/get-services";
+} from "@/actions/services";
 import { useQuery } from "@tanstack/react-query";
 
 /**

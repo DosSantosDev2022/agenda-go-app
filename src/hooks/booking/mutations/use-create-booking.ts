@@ -1,4 +1,4 @@
-import { createBookingAction } from "@/actions";
+import { createBookingAction } from "@/actions/booking";
 import { BookingViewFormValues } from "@/types/schema/zod-booking-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

@@ -1,6 +1,6 @@
 // hooks/inputs/mutations/use-delete-input.ts
 
-import { deleteInputAction } from "@/actions/inputs/delete-inputs-action";
+import { deleteInputAction } from "@/actions/inputs";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

@@ -1,5 +1,5 @@
 // hooks/mutations/use-delete-service.ts
-import { deleteServiceAction } from "@/actions/services/delete-service";
+import { deleteServiceAction } from "@/actions/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

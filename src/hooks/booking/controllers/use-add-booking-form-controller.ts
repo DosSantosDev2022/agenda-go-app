@@ -1,6 +1,6 @@
 // hooks/agenda/use-add-booking-form-controller.ts
 
-import { CustomerSearchResult } from "@/actions";
+import { CustomerSearchResult } from "@/actions/customer";
 import { useCreateBooking, useDailyAvailabilityQuery } from "@/hooks/booking";
 import { useServicesQuery } from "@/hooks/services";
 import {

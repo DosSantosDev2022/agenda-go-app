@@ -1,4 +1,4 @@
-import { getDailyAvailabilityAction } from "@/actions/booking/get-daily-availability-action"; // Ação acima
+import { getDailyAvailabilityAction } from "@/actions/booking"; // Ação acima
 import { DailyAvailability } from "@/types/booking-types"; // Tipo DailyAvailability
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { format } from "date-fns";

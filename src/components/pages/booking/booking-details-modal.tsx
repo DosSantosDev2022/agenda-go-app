@@ -1,6 +1,6 @@
 // components/agenda/booking-details-modal.tsx
 "use client";
-import { BookingAgenda } from "@/actions/booking/get-booking";
+import { BookingAgenda } from "@/actions/booking/get-booking-action";
 import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Separator } from "@/components/ui";
 import { useBookingDetailsController } from "@/hooks/booking";
 import { formatBookingStatus, getStatusVariant } from "@/utils/format-status-booking";

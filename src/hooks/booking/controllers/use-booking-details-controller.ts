@@ -1,7 +1,6 @@
 // hooks/agenda/use-booking-details-controller.ts
 
-import { BookingAgenda } from "@/actions/booking/get-booking";
-import { updateBookingStatus } from "@/actions/booking/update-status-booking-action";
+import { BookingAgenda,updateBookingStatus } from "@/actions/booking";
 import { useIsSlotOccupiedQuery } from "@/hooks/booking";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";

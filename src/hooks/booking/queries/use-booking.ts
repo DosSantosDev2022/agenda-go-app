@@ -1,4 +1,4 @@
-import { BookingAgenda, getBookings } from "@/actions/booking/get-booking";
+import { BookingAgenda, getBookings } from "@/actions/booking";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 /**
