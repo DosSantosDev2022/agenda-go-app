@@ -1,5 +1,4 @@
-import { InputsTable } from "@/components/pages/inputs";
-import { AddInputs } from "@/components/pages/inputs/addInputs";
+import { AddInputs, InputsTable } from "@/components/pages/inputs";
 
 /**
  * @description Página principal para visualização e gerenciamento de insumos.

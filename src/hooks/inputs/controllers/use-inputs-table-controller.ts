@@ -57,6 +57,9 @@ export function useInputsTableController() {
   const isSearching = isFetching && !!searchTerm;
   const hasResults = allInputs.length > 0;
 
+
+
+
   // 8. Retorno do Hook
   return {
     // Dados e Referência

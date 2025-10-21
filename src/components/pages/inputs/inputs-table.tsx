@@ -2,10 +2,9 @@
 "use client";
 
 import { Button, DataTable } from "@/components/ui/"; // Reutilizando seu DataTable
-import { useCustomerActions } from "@/hooks/customer/";
+import { useInputsTableController } from "@/hooks/inputs/controllers/use-inputs-table-controller";
 import { Loader2 } from "lucide-react";
 import { InputsColumns } from "./inputs-columns";
-import { useInputsTableController } from "@/hooks/inputs/controllers/use-inputs-table-controller";
 
 /**
  * @description Componente que exibe a tabela de clientes com scroll infinito.
@@ -26,13 +25,6 @@ const InputsTable = () => {
     isLoading
   } = useInputsTableController();
 
-  const {
-    isModalOpen,
-    selectedCustomer,
-    handleOpenActionsModal, // Usaremos esta função
-    handleCloseActionsModal,
-  } = useCustomerActions();
-
   if (isLoadingInitial) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -51,7 +43,7 @@ const InputsTable = () => {
   }
 
   // Passamos a função de callback para o factory de colunas
-  const columns = InputsColumns();
+  const columns = InputsColumns
 
   return (
     <div className="space-y-4">
